@@ -1,0 +1,10 @@
+# The compiled generators. `make -C tools` rebuilds them.
+/tools/badges
+/tools/blinkies
+/tools/check
+/tools/localise
+/tools/stamps
+
+# The stamp faces are the intermediate that the animation reads. The
+# repository carries the GIF that comes out of it.
+/assets/stamps/*.png
