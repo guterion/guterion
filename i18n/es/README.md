@@ -157,9 +157,10 @@ El correo es la mejor forma de contactarme. Respondo apenas puedo.
 <summary><sub>Estadísticas</sub></summary>
 
 <p align="center">
-<a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Fusers%2Fguterion&amp;query=%24.public_repos&amp;label=Repositorios&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Repositorios públicos"></a>
 <a href="https://github.com/guterion?tab=followers"><img src="https://img.shields.io/github/followers/guterion?label=Seguidores&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Seguidores en GitHub"></a>
 <a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/github/stars/guterion?label=Estrellas&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Estrellas en GitHub"></a>
+<a href="https://github.com/search?q=author%3Aguterion+type%3Aissue&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Aissue&amp;label=Incidencias&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Incidencias abiertas"></a>
+<a href="https://github.com/search?q=author%3Aguterion+type%3Apr&amp;type=pullrequests"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Apr&amp;label=Solicitudes&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Solicitudes abiertas"></a>
 </p>
 
 </details>

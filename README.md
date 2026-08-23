@@ -157,9 +157,10 @@ Email is the best way to reach me. I answer as soon as I can.
 <summary><sub>Stats</sub></summary>
 
 <p align="center">
-<a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Fusers%2Fguterion&amp;query=%24.public_repos&amp;label=Repositories&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Public repositories"></a>
 <a href="https://github.com/guterion?tab=followers"><img src="https://img.shields.io/github/followers/guterion?label=Followers&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="GitHub followers"></a>
 <a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/github/stars/guterion?label=Stars&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="GitHub stars"></a>
+<a href="https://github.com/search?q=author%3Aguterion+type%3Aissue&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Aissue&amp;label=Issues&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Issues opened"></a>
+<a href="https://github.com/search?q=author%3Aguterion+type%3Apr&amp;type=pullrequests"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Apr&amp;label=Pull%20requests&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Pull requests opened"></a>
 </p>
 
 </details>

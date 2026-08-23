@@ -156,9 +156,10 @@ Epistula optima via est ad me contingendum. Respondeo cum primum possum.
 <summary><sub>Statistica</sub></summary>
 
 <p align="center">
-<a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Fusers%2Fguterion&amp;query=%24.public_repos&amp;label=Repositoria&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Repositoria publica"></a>
 <a href="https://github.com/guterion?tab=followers"><img src="https://img.shields.io/github/followers/guterion?label=Sectatores&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Sectatores in GitHub"></a>
 <a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/github/stars/guterion?label=Stellae&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Stellae in GitHub"></a>
+<a href="https://github.com/search?q=author%3Aguterion+type%3Aissue&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Aissue&amp;label=Quaestiones&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Quaestiones apertae"></a>
+<a href="https://github.com/search?q=author%3Aguterion+type%3Apr&amp;type=pullrequests"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Apr&amp;label=Petitiones&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Petitiones apertae"></a>
 </p>
 
 </details>
