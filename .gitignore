@@ -3,6 +3,7 @@
 /tools/blinkies
 /tools/check
 /tools/localise
+/tools/outline
 /tools/stamps
 
 # The stamp faces are the intermediate that the animation reads. The

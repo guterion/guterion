@@ -14,11 +14,17 @@ traps. `tools/Makefile` expects Fil-C at
 `~/opt/filc-0.683-linux-x86_64`; set `FILC` to use another one.
 
 ```sh
-make -C tools           # build the five programs
+make -C tools           # build them all
 make -C tools assets    # stamps, then the animation, then the badges
 make -C tools pages     # i18n/{en,es,la}/ from README.md
-make -C tools verify    # links, alt text, box widths
+make -C tools verify    # links, quoted paths, alt text, box widths
 ```
+
+`check.c` is what `verify` runs. It reads the four pages and
+`LICENCE.md`, resolves every link, image source and quoted repository
+path, confirms each image carries `alt`, and measures the ASCII boxes
+so their lines stay at one width. It names each problem and returns a
+failure, so a build stops on it.
 
 Each program resolves its paths from the repository root, and the
 recipes above run there. The programs read no font and no image
