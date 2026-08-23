@@ -129,8 +129,8 @@ Epistula optima via est ad me contingendum. Respondeo cum primum possum.
 
 <table>
 <tr>
-<td><a href="https://liberapay.com/guterion/"><img src="../../assets/badges/liberapay.svg" height="20" alt="Liberapay"></a></td>
-<td><a href="https://liberapay.com/guterion/">liberapay.com/guterion</a></td>
+<td><a href="https://liberapay.com/fraxgut/"><img src="../../assets/badges/liberapay.svg" height="20" alt="Liberapay"></a></td>
+<td><a href="https://liberapay.com/fraxgut/">liberapay.com/fraxgut</a></td>
 </tr>
 <tr>
 <td><b>Monero</b></td>
@@ -146,7 +146,7 @@ Epistula optima via est ad me contingendum. Respondeo cum primum possum.
 
 <a href="https://magicant.github.io/yash/"><img src="../../assets/stamps/shell.gif" width="99" height="56" alt="Cortex imperatorius"></a> <a href="https://www.open-std.org/jtc1/sc22/wg14/"><img src="../../assets/stamps/clang.gif" width="99" height="56" alt="Lingua C"></a> <a href="https://neovim.io/"><img src="../../assets/stamps/neovim.gif" width="99" height="56" alt="Neovim"></a> <a href="https://www.fsf.org/"><img src="../../assets/stamps/foss.gif" width="99" height="56" alt="Programmatura libera"></a> <a href="https://www.getmonero.org/"><img src="../../assets/stamps/monero.gif" width="99" height="56" alt="Monero"></a> <a href="https://www.minecraft.net/"><img src="../../assets/stamps/minecraft.gif" width="99" height="56" alt="Minecraft"></a> <a href="https://es.dragon-ball-official.com/"><img src="../../assets/stamps/dragonball.gif" width="99" height="56" alt="Dragon Ball"></a>
 
-<a href="https://www.thelatinlibrary.com/"><img src="../../assets/stamps/latine.gif" width="99" height="56" alt="Lingua Latina"></a> <a href="https://www.santiagocapital.cl/"><img src="../../assets/stamps/santiago.gif" width="99" height="56" alt="Santiago"></a> <a href="https://www.marcachile.cl/"><img src="../../assets/stamps/chile.gif" width="99" height="56" alt="Chile"></a> <a href="https://laroja.cl/"><img src="../../assets/stamps/laroja.gif" width="99" height="56" alt="La Roja"></a> <a href="https://www.sslazio.it/"><img src="../../assets/stamps/lazio.gif" width="99" height="56" alt="SS Lazio"></a> <a href="https://www.fifa.com/"><img src="../../assets/stamps/futbol.gif" width="99" height="56" alt="Pediludium"></a> <a href="https://www.linkinpark.com/"><img src="../../assets/stamps/linkinpark.gif" width="99" height="56" alt="Linkin Park"></a>
+<a href="https://www.thelatinlibrary.com/"><img src="../../assets/stamps/latine.gif" width="99" height="56" alt="Lingua Latina"></a> <a href="https://www.santiagoturismo.cl/"><img src="../../assets/stamps/santiago.gif" width="99" height="56" alt="Santiago"></a> <a href="https://www.marcachile.cl/"><img src="../../assets/stamps/chile.gif" width="99" height="56" alt="Chile"></a> <a href="https://laroja.cl/"><img src="../../assets/stamps/laroja.gif" width="99" height="56" alt="La Roja"></a> <a href="https://www.sslazio.it/"><img src="../../assets/stamps/lazio.gif" width="99" height="56" alt="SS Lazio"></a> <a href="https://www.fifa.com/"><img src="../../assets/stamps/futbol.gif" width="99" height="56" alt="Pediludium"></a> <a href="https://www.linkinpark.com/"><img src="../../assets/stamps/linkinpark.gif" width="99" height="56" alt="Linkin Park"></a>
 
 </div>
 
