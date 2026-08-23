@@ -80,7 +80,7 @@ source, with attribution as each licence requires:
 | Mark | Source | Licence |
 |------|--------|---------|
 | `assets/logos/tux.png` | Tux, by Larry Ewing with The GIMP | Attribution |
-| `assets/logos/aquila.png` and `assets/flags/spqr.png` | Flag of the Roman Empire with Eagle, by OttavianoUrsu | CC BY-SA 4.0 |
+| `assets/logos/aquila.png` and `assets/flags/spqr.svg` | Flag of the Roman Empire with Eagle, by OttavianoUrsu | CC BY-SA 4.0 |
 | `assets/logos/gunelve.png` | Wüñellfe from the Mapuche flag, by Ñancu | CC BY-SA 3.0 |
 | `assets/logos/futbol.png` | Soccerball | CC0 |
 | `assets/logos/santiago.png` | Cross of Saint James | CC BY-SA 3.0 |
