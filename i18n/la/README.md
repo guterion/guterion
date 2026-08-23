@@ -134,7 +134,7 @@ Epistula optima via est ad me contingendum. Respondeo cum primum possum.
 </tr>
 <tr>
 <td><b>Monero</b></td>
-<td>Scribe mihi ut inscriptionem accipias.</td>
+<td><code>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</code></td>
 </tr>
 </table>
 

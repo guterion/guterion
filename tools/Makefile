@@ -8,7 +8,7 @@
 # carries its bounds, so an overrun traps instead of corrupting the
 # heap. Point FILC at another installation to build against a different
 # version of it.
-FILC ?= $(HOME)/opt/filc-0.683-linux-x86_64
+FILC ?= $(HOME)/.local/opt/filc-0.683-linux-x86_64
 CC = $(FILC)/build/bin/clang
 
 # --- FLAGS ------------------------------------------------------------

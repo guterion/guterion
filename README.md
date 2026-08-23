@@ -135,7 +135,7 @@ Email is the best way to reach me. I answer as soon as I can.
 </tr>
 <tr>
 <td><b>Monero</b></td>
-<td>Write to me for an address.</td>
+<td><code>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</code></td>
 </tr>
 </table>
 

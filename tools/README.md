@@ -11,7 +11,7 @@ These programs write everything in `assets/` and the pages under
 `i18n/`. They are C, and they build with Fil-C, which gives them memory
 safety while they run: a pointer carries its bounds, so an overrun
 traps. `tools/Makefile` expects Fil-C at
-`~/opt/filc-0.683-linux-x86_64`; set `FILC` to use another one.
+`~/.local/opt/filc-0.683-linux-x86_64`; set `FILC` to use another one.
 
 ```sh
 make -C tools           # build them all

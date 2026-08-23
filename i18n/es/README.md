@@ -135,7 +135,7 @@ El correo es la mejor forma de contactarme. Respondo apenas puedo.
 </tr>
 <tr>
 <td><b>Monero</b></td>
-<td>Escríbame para conseguir una dirección.</td>
+<td><code>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</code></td>
 </tr>
 </table>
 
