@@ -61,6 +61,17 @@ check: check.c
 # the faces that the stamp program writes.
 assets: stamps blinkies badges
 	cd .. && tools/stamps && tools/blinkies && tools/badges
+	$(MAKE) raster
+
+# The badges also travel as PNG at twice the size, for a mail signature
+# and for anywhere else that shows no SVG. Rasterising a badge needs
+# DejaVu with antialiasing, which is a font library, so rsvg-convert
+# does that step. Run this after `assets`, or the PNG keep the badge
+# that the SVG no longer holds.
+raster:
+	cd ../assets/badges && for f in *.svg; do \
+		rsvg-convert -w 198 -h 40 "$$f" -o "email/$${f%.svg}@2x.png"; \
+	done
 
 pages: localise
 	cd .. && tools/localise
@@ -71,4 +82,4 @@ verify: check
 clean:
 	rm -f $(PROGRAMS)
 
-.PHONY: all assets pages verify clean
+.PHONY: all assets raster pages verify clean
