@@ -207,6 +207,46 @@ static void check_targets(const char *doc, char *text)
 	}
 }
 
+/*
+ * Confirm the repository paths that the prose quotes. A path inside
+ * backticks names a file for the reader, so a stale one sends them to
+ * a file that went away. The path is read from the repository root,
+ * which is where the prose means it, and a name that holds a wildcard
+ * stands for a set rather than for one file.
+ */
+static void check_quoted_paths(const char *doc, char *text)
+{
+	static const char *const roots[] = {
+		"assets/", "tools/", "i18n/", NULL
+	};
+	const char *p = text;
+
+	while ((p = strchr(p, '`')) != NULL) {
+		char quoted[MAX_PATH];
+		const char *start = p + 1;
+		const char *close = strchr(start, '`');
+		struct stat st;
+		int known = 0;
+
+		p = start;
+		if (!close || (size_t)(close - start) >= sizeof quoted)
+			continue;
+		memcpy(quoted, start, (size_t)(close - start));
+		quoted[close - start] = '\0';
+		p = close + 1;
+
+		if (strchr(quoted, '*') || strchr(quoted, ' '))
+			continue;
+		for (int i = 0; roots[i]; i++)
+			if (!strncmp(quoted, roots[i], strlen(roots[i])))
+				known = 1;
+		if (!known)
+			continue;
+		if (stat(quoted, &st) != 0)
+			report("%s: quoted path %s is absent", doc, quoted);
+	}
+}
+
 /* Every image carries alt text; a decorative one carries an empty one. */
 static void check_alt(const char *doc, char *text)
 {
@@ -297,6 +337,7 @@ int main(void)
 		}
 		check_boxes(docs[i], text);
 		check_targets(docs[i], text);
+		check_quoted_paths(docs[i], text);
 		check_alt(docs[i], text);
 		free(text);
 	}
@@ -307,7 +348,7 @@ int main(void)
 			printf("  %s\n", problems[i]);
 		return 1;
 	}
-	printf("All boxes aligned, all links resolve, "
+	printf("All boxes aligned, every link and quoted path resolves, "
 	       "every image has alt text.\n");
 	return 0;
 }
