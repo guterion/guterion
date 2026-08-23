@@ -129,8 +129,8 @@ Epistula optima via est ad me contingendum. Respondeo cum primum possum.
 
 <table>
 <tr>
-<td><a href="https://liberapay.com/fraxgut/"><img src="../../assets/badges/liberapay.svg" height="20" alt="Liberapay"></a></td>
-<td><a href="https://liberapay.com/fraxgut/">liberapay.com/fraxgut</a></td>
+<td><a href="https://liberapay.com/guterion/"><img src="../../assets/badges/liberapay.svg" height="20" alt="Liberapay"></a></td>
+<td><a href="https://liberapay.com/guterion/">liberapay.com/guterion</a></td>
 </tr>
 <tr>
 <td><b>Monero</b></td>
