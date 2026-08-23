@@ -172,6 +172,8 @@ static int huff_decode(struct bitstream *bs, const struct huffman *h)
 	return -1;
 }
 
+/* The length and distance codes of RFC 1951, read by the inflate
+   above and written by the deflate below. */
 static const unsigned short LEN_BASE[] = {
 	3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
 	35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258
@@ -605,20 +607,290 @@ static void chunk(FILE *f, const char *type, const unsigned char *data,
 	fwrite(tail, 1, 4, f);
 }
 
+/* --- DEFLATE ---------------------------------------------------------- */
+
 /*
- * Write the pixels as stored DEFLATE blocks. The file is larger than a
- * compressed one, and every PNG reader accepts it; optipng squeezes it
- * afterwards if size matters.
+ * Compress with the fixed Huffman table of RFC 1951. A dynamic table
+ * would squeeze a little further, but it costs a second pass and a
+ * tree in the output, and the images here are flat colour that the
+ * matcher already handles well.
+ */
+
+/* The output bit stream. DEFLATE fills each byte from the low bit up. */
+struct bits {
+	unsigned char *buf;
+	size_t cap, len;
+	unsigned int acc;
+	int count;
+};
+
+static int bits_byte(struct bits *b, unsigned char v)
+{
+	if (b->len == b->cap) {
+		size_t cap = b->cap ? b->cap * 2 : 4096;
+		unsigned char *grown = realloc(b->buf, cap);
+
+		if (!grown)
+			return -1;
+		b->buf = grown;
+		b->cap = cap;
+	}
+	b->buf[b->len++] = v;
+	return 0;
+}
+
+static int put_bits(struct bits *b, unsigned int value, int n)
+{
+	b->acc |= (value & ((1u << n) - 1)) << b->count;
+	b->count += n;
+	while (b->count >= 8) {
+		if (bits_byte(b, (unsigned char)(b->acc & 0xFF)))
+			return -1;
+		b->acc >>= 8;
+		b->count -= 8;
+	}
+	return 0;
+}
+
+/* A Huffman code travels most significant bit first. */
+static int put_code(struct bits *b, unsigned int code, int n)
+{
+	for (int i = n - 1; i >= 0; i--)
+		if (put_bits(b, (code >> i) & 1, 1))
+			return -1;
+	return 0;
+}
+
+/* The fixed table gives each literal its length and its code. */
+static int put_literal(struct bits *b, unsigned int sym)
+{
+	if (sym < 144)
+		return put_code(b, 0x30 + sym, 8);
+	if (sym < 256)
+		return put_code(b, 0x190 + sym - 144, 9);
+	if (sym < 280)
+		return put_code(b, sym - 256, 7);
+	return put_code(b, 0xC0 + sym - 280, 8);
+}
+
+#define HASH_BITS 15
+#define HASH_SIZE (1 << HASH_BITS)
+#define WINDOW 32768
+#define MIN_MATCH 3
+#define MAX_MATCH 258
+#define MAX_CHAIN 64          /* How far back one hash chain is followed. */
+
+static unsigned int hash3(const unsigned char *p)
+{
+	return (((unsigned int)p[0] << 16) ^ ((unsigned int)p[1] << 8) ^ p[2])
+	       * 2654435761u >> (32 - HASH_BITS);
+}
+
+/*
+ * Compress `src` into a zlib stream. The caller owns the result and
+ * receives its length in `*out_len`.
+ */
+static unsigned char *deflate_fixed(const unsigned char *src, size_t n,
+				    size_t *out_len)
+{
+	struct bits b = { NULL, 0, 0, 0, 0 };
+	int *head = malloc(sizeof *head * HASH_SIZE);
+	int *prev = malloc(sizeof *prev * (n ? n : 1));
+	unsigned int s1 = 1, s2 = 0;
+	size_t i = 0;
+
+	if (!head || !prev) {
+		free(head);
+		free(prev);
+		return NULL;
+	}
+	for (int k = 0; k < HASH_SIZE; k++)
+		head[k] = -1;
+
+	/* zlib header: deflate, 32K window, default level, no dictionary. */
+	if (bits_byte(&b, 0x78) || bits_byte(&b, 0x9C))
+		goto fail;
+	/* One final block, fixed Huffman. */
+	if (put_bits(&b, 1, 1) || put_bits(&b, 1, 2))
+		goto fail;
+
+	while (i < n) {
+		size_t best_len = 0, best_dist = 0;
+
+		if (i + MIN_MATCH <= n) {
+			unsigned int h = hash3(src + i);
+			int cand = head[h];
+
+			for (int chain = 0; cand >= 0 && chain < MAX_CHAIN;
+			     chain++) {
+				size_t dist = i - (size_t)cand;
+				size_t len = 0;
+				size_t limit = n - i;
+
+				if (dist == 0 || dist > WINDOW)
+					break;
+				if (limit > MAX_MATCH)
+					limit = MAX_MATCH;
+				while (len < limit &&
+				       src[cand + len] == src[i + len])
+					len++;
+				if (len > best_len) {
+					best_len = len;
+					best_dist = dist;
+					if (len == MAX_MATCH)
+						break;
+				}
+				cand = prev[cand];
+			}
+			prev[i] = head[h];
+			head[h] = (int)i;
+		}
+
+		if (best_len >= MIN_MATCH) {
+			int lc = 0, dc = 0;
+
+			while (lc < 28 && LEN_BASE[lc + 1] <= best_len)
+				lc++;
+			while (dc < 29 && DIST_BASE[dc + 1] <= best_dist)
+				dc++;
+			if (put_literal(&b, (unsigned int)(257 + lc)) ||
+			    put_bits(&b, (unsigned int)(best_len -
+							LEN_BASE[lc]),
+				     LEN_EXTRA[lc]) ||
+			    put_code(&b, (unsigned int)dc, 5) ||
+			    put_bits(&b, (unsigned int)(best_dist -
+							DIST_BASE[dc]),
+				     DIST_EXTRA[dc]))
+				goto fail;
+			/* Register the bytes the match covered. */
+			for (size_t k = i + 1; k < i + best_len; k++)
+				if (k + MIN_MATCH <= n) {
+					unsigned int h = hash3(src + k);
+
+					prev[k] = head[h];
+					head[h] = (int)k;
+				}
+			i += best_len;
+		} else {
+			if (put_literal(&b, src[i]))
+				goto fail;
+			i++;
+		}
+	}
+	if (put_literal(&b, 256))            /* End of block. */
+		goto fail;
+	while (b.count)                      /* Pad out the last byte. */
+		if (put_bits(&b, 0, 1))
+			goto fail;
+
+	for (size_t k = 0; k < n; k++) {
+		s1 = (s1 + src[k]) % 65521;
+		s2 = (s2 + s1) % 65521;
+	}
+	if (bits_byte(&b, (unsigned char)(s2 >> 8)) ||
+	    bits_byte(&b, (unsigned char)(s2 & 0xFF)) ||
+	    bits_byte(&b, (unsigned char)(s1 >> 8)) ||
+	    bits_byte(&b, (unsigned char)(s1 & 0xFF)))
+		goto fail;
+
+	free(head);
+	free(prev);
+	*out_len = b.len;
+	return b.buf;
+
+fail:
+	free(head);
+	free(prev);
+	free(b.buf);
+	return NULL;
+}
+
+/*
+ * Choose a filter for one row. Each of the five is scored by the sum
+ * of its bytes read as signed values, which is the heuristic that the
+ * PNG specification recommends: the filter that leaves the smallest
+ * sum leaves the least for the compressor to carry.
+ */
+static int choose_filter(const unsigned char *row, const unsigned char *up,
+			 size_t width_bytes, int bpp, unsigned char *out)
+{
+	long best_score = -1;
+	int best = 0;
+
+	for (int f = 0; f < 5; f++) {
+		long score = 0;
+
+		for (size_t i = 0; i < width_bytes; i++) {
+			int a = i >= (size_t)bpp ? row[i - bpp] : 0;
+			int b = up ? up[i] : 0;
+			int c = (up && i >= (size_t)bpp) ? up[i - bpp] : 0;
+			int v;
+
+			switch (f) {
+			case 0: v = row[i]; break;
+			case 1: v = row[i] - a; break;
+			case 2: v = row[i] - b; break;
+			case 3: v = row[i] - ((a + b) >> 1); break;
+			default: {
+				int p = a + b - c;
+				int pa = p > a ? p - a : a - p;
+				int pb = p > b ? p - b : b - p;
+				int pc = p > c ? p - c : c - p;
+				int pred = (pa <= pb && pa <= pc) ? a
+					 : (pb <= pc ? b : c);
+
+				v = row[i] - pred;
+				break;
+			}
+			}
+			v = (signed char)v;
+			score += v < 0 ? -v : v;
+		}
+		if (best_score < 0 || score < best_score) {
+			best_score = score;
+			best = f;
+		}
+	}
+
+	/* Apply the winner. */
+	for (size_t i = 0; i < width_bytes; i++) {
+		int a = i >= (size_t)bpp ? row[i - bpp] : 0;
+		int b = up ? up[i] : 0;
+		int c = (up && i >= (size_t)bpp) ? up[i - bpp] : 0;
+
+		switch (best) {
+		case 0: out[i] = row[i]; break;
+		case 1: out[i] = (unsigned char)(row[i] - a); break;
+		case 2: out[i] = (unsigned char)(row[i] - b); break;
+		case 3: out[i] = (unsigned char)(row[i] - ((a + b) >> 1)); break;
+		default: {
+			int p = a + b - c;
+			int pa = p > a ? p - a : a - p;
+			int pb = p > b ? p - b : b - p;
+			int pc = p > c ? p - c : c - p;
+
+			out[i] = (unsigned char)(row[i] -
+				((pa <= pb && pa <= pc) ? a : (pb <= pc ? b : c)));
+			break;
+		}
+		}
+	}
+	return best;
+}
+
+/*
+ * Write the image. Each row takes the filter that flattens it best,
+ * and the result goes through the deflate above.
  */
 int png_write(const char *path, const struct image *im)
 {
 	FILE *f = fopen(path, "wb");
 	unsigned char ihdr[13];
 	unsigned char *raw, *z;
-	size_t stride = (size_t)im->w * 4 + 1;
+	size_t width_bytes = (size_t)im->w * 4;
+	size_t stride = width_bytes + 1;
 	size_t raw_len = stride * (size_t)im->h;
-	size_t z_len, o = 0;
-	unsigned int s1 = 1, s2 = 0;
+	size_t z_len = 0;
 
 	if (!f)
 		return -1;
@@ -637,43 +909,25 @@ int png_write(const char *path, const struct image *im)
 		return -1;
 	}
 	for (int y = 0; y < im->h; y++) {
-		raw[(size_t)y * stride] = 0;   /* filter: none */
-		memcpy(raw + (size_t)y * stride + 1,
-		       im->px + (size_t)y * im->w * 4, (size_t)im->w * 4);
+		const unsigned char *row = im->px + (size_t)y * width_bytes;
+		const unsigned char *up = y ? im->px + (size_t)(y - 1) *
+					  width_bytes : NULL;
+		unsigned char *dst = raw + (size_t)y * stride;
+
+		dst[0] = (unsigned char)choose_filter(row, up, width_bytes, 4,
+						      dst + 1);
 	}
 
-	/* zlib header, stored blocks of at most 65535 bytes, adler32. */
-	z_len = 2 + raw_len + 5 * (raw_len / 65535 + 1) + 4;
-	z = malloc(z_len);
+	z = deflate_fixed(raw, raw_len, &z_len);
+	free(raw);
 	if (!z) {
-		free(raw);
 		fclose(f);
 		return -1;
 	}
-	z[o++] = 0x78;
-	z[o++] = 0x01;
-	for (size_t i = 0; i < raw_len; i += 65535) {
-		size_t block = raw_len - i < 65535 ? raw_len - i : 65535;
 
-		z[o++] = (i + block >= raw_len) ? 1 : 0;
-		z[o++] = (unsigned char)(block & 0xFF);
-		z[o++] = (unsigned char)(block >> 8);
-		z[o++] = (unsigned char)(~block & 0xFF);
-		z[o++] = (unsigned char)((~block >> 8) & 0xFF);
-		memcpy(z + o, raw + i, block);
-		o += block;
-	}
-	for (size_t i = 0; i < raw_len; i++) {
-		s1 = (s1 + raw[i]) % 65521;
-		s2 = (s2 + s1) % 65521;
-	}
-	put32(z + o, (s2 << 16) | s1);
-	o += 4;
-
-	chunk(f, "IDAT", z, o);
+	chunk(f, "IDAT", z, z_len);
 	chunk(f, "IEND", NULL, 0);
 
-	free(raw);
 	free(z);
 	fclose(f);
 	return 0;
