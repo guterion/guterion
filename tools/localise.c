@@ -14,6 +14,9 @@
  * skipped in silence, which catches a sentence that moved.
  */
 
+/* strdup comes from the GNU extensions, not from C itself. */
+#define _GNU_SOURCE
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -301,6 +304,10 @@ static char *slurp(const char *path)
 	fseek(f, 0, SEEK_END);
 	size = ftell(f);
 	fseek(f, 0, SEEK_SET);
+	if (size < 0) {              /* The file gave no length. */
+		fclose(f);
+		return NULL;
+	}
 	buf = malloc((size_t)size + 1);
 	if (!buf || fread(buf, 1, (size_t)size, f) != (size_t)size) {
 		fprintf(stderr, "cannot read %s\n", path);
@@ -338,6 +345,10 @@ static char *selector_line(const char *text)
 	if (!end)
 		end = start + strlen(start);
 	line = malloc((size_t)(end - start) + 1);
+	if (!line) {
+		fprintf(stderr, "  out of memory\n");
+		exit(1);
+	}
 	memcpy(line, start, (size_t)(end - start));
 	line[end - start] = '\0';
 	return line;
@@ -351,7 +362,11 @@ static void build(const char *lang, const char *readme, const char *selector,
 			 : strcmp(lang, "es") == 0 ? "Spanish" : "Latin";
 	char *text = strdup(readme);
 	char *sel = selector_line(readme);
-	int hits;
+
+	if (!text) {
+		fprintf(stderr, "  out of memory\n");
+		exit(1);
+	}
 
 	/* Hold the selector aside while the asset paths shift down a level. */
 	text = apply(text, sel, "@@SEL@@");
@@ -394,7 +409,6 @@ static void build(const char *lang, const char *readme, const char *selector,
 
 	free(text);
 	free(sel);
-	(void)hits;
 }
 
 int main(void)

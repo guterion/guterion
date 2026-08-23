@@ -101,7 +101,7 @@ int main(void)
 	int count = 0;
 	long total = 0;
 	DIR *d = opendir("assets/stamps");
-	struct dirent *entry;
+	const struct dirent *entry;
 
 	if (!d) {
 		fprintf(stderr, "cannot open assets/stamps\n");

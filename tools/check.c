@@ -14,6 +14,9 @@
  * as a pre-commit gate.
  */
 
+/* memmem comes from the GNU extensions, not from C itself. */
+#define _GNU_SOURCE
+
 #include <dirent.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -107,9 +110,9 @@ static int starts_box(const char *line)
 }
 
 /* Every line of one box must come out at the same width. */
-static void check_boxes(const char *doc, char *text)
+static void check_boxes(const char *doc, const char *text)
 {
-	char *line = text;
+	const char *line = text;
 	int inside = 0, start_line = 0, line_no = 0;
 	int first_width = -1;
 
@@ -171,7 +174,7 @@ static int is_remote(const char *t)
  * Collect every relative link and image source, and confirm each one
  * points at a file that exists.
  */
-static void check_targets(const char *doc, char *text)
+static void check_targets(const char *doc, const char *text)
 {
 	const char *p = text;
 
@@ -214,7 +217,7 @@ static void check_targets(const char *doc, char *text)
  * which is where the prose means it, and a name that holds a wildcard
  * stands for a set rather than for one file.
  */
-static void check_quoted_paths(const char *doc, char *text)
+static void check_quoted_paths(const char *doc, const char *text)
 {
 	static const char *const roots[] = {
 		"assets/", "tools/", "i18n/", NULL
@@ -248,7 +251,7 @@ static void check_quoted_paths(const char *doc, char *text)
 }
 
 /* Every image carries alt text; a decorative one carries an empty one. */
-static void check_alt(const char *doc, char *text)
+static void check_alt(const char *doc, const char *text)
 {
 	const char *p = text;
 
@@ -283,6 +286,10 @@ static char *slurp(const char *path)
 	fseek(f, 0, SEEK_END);
 	size = ftell(f);
 	fseek(f, 0, SEEK_SET);
+	if (size < 0) {              /* The file gave no length. */
+		fclose(f);
+		return NULL;
+	}
 	buf = malloc((size_t)size + 1);
 	if (!buf) {
 		fclose(f);
@@ -302,7 +309,7 @@ static char *slurp(const char *path)
 static int collect_docs(char docs[MAX_DOCS][MAX_PATH])
 {
 	DIR *d = opendir("i18n");
-	struct dirent *entry;
+	const struct dirent *entry;
 	int n = 0;
 
 	snprintf(docs[n++], MAX_PATH, "README.md");

@@ -150,6 +150,10 @@ static unsigned char *slurp(const char *path, size_t *len)
 	fseek(f, 0, SEEK_END);
 	size = ftell(f);
 	fseek(f, 0, SEEK_SET);
+	if (size < 0) {              /* The file gave no length. */
+		fclose(f);
+		return NULL;
+	}
 	buf = malloc((size_t)size);
 	if (!buf || fread(buf, 1, (size_t)size, f) != (size_t)size) {
 		fprintf(stderr, "cannot read %s\n", path);
@@ -171,7 +175,7 @@ static unsigned char *slurp(const char *path, size_t *len)
 static void paint_field(struct image *im, unsigned int rgb, int scale)
 {
 	double radius = (double)RADIUS * scale;
-	unsigned char base[3] = {
+	const unsigned char base[3] = {
 		(unsigned char)(rgb >> 16), (unsigned char)(rgb >> 8),
 		(unsigned char)rgb
 	};

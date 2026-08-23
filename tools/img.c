@@ -10,6 +10,9 @@
  * correctly.
  */
 
+/* M_PI comes from the GNU extensions, not from C itself. */
+#define _GNU_SOURCE
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -217,7 +220,8 @@ static int grow_push(struct growbuf *g, unsigned char byte)
  * Inflate a zlib stream: two header bytes, then the DEFLATE blocks.
  * Returns a fresh buffer that the caller owns.
  */
-unsigned char *inflate_zlib(const unsigned char *src, size_t src_len,
+static unsigned char *inflate_zlib(const unsigned char *src,
+				   size_t src_len,
 			    size_t *out_len)
 {
 	struct bitstream bs = { src, src_len, 2, 0, 0 };  /* skip zlib header */
@@ -401,7 +405,15 @@ struct image *png_read(const char *path)
 		return NULL;
 	}
 	fseek(f, 0, SEEK_END);
-	size = (size_t)ftell(f);
+	{
+		long got = ftell(f);
+
+		if (got < 0) {       /* The file gave no length. */
+			fclose(f);
+			return NULL;
+		}
+		size = (size_t)got;
+	}
 	fseek(f, 0, SEEK_SET);
 	file = malloc(size);
 	if (!file || fread(file, 1, size, f) != size) {
@@ -843,6 +855,8 @@ static int choose_filter(const unsigned char *row, const unsigned char *up,
 				break;
 			}
 			}
+			/* The specification scores the byte as a
+			   signed value, so 255 counts as one. */
 			v = (signed char)v;
 			score += v < 0 ? -v : v;
 		}
@@ -1053,7 +1067,7 @@ static int widest_channel(const struct swatch *s, const struct group *g,
 	int best = 0;
 
 	for (int i = g->lo; i < g->hi; i++) {
-		unsigned char c[3] = { s[i].r, s[i].g, s[i].b };
+		const unsigned char c[3] = { s[i].r, s[i].g, s[i].b };
 
 		for (int k = 0; k < 3; k++) {
 			if (c[k] < lo[k])
@@ -1080,8 +1094,8 @@ static int sort_channel;
 static int by_channel(const void *a, const void *b)
 {
 	const struct swatch *x = a, *y = b;
-	unsigned char xc[3] = { x->r, x->g, x->b };
-	unsigned char yc[3] = { y->r, y->g, y->b };
+	const unsigned char xc[3] = { x->r, x->g, x->b };
+	const unsigned char yc[3] = { y->r, y->g, y->b };
 
 	return xc[sort_channel] - yc[sort_channel];
 }
@@ -1117,7 +1131,10 @@ static struct swatch *histogram(struct image *const *frames, int count,
 			const unsigned char *p = frames[f]->px + i * 4;
 			unsigned int key = ((unsigned int)p[0] << 16) |
 					   ((unsigned int)p[1] << 8) | p[2];
-			size_t probe = (key * 2654435761u) & (cap - 1);
+			/* The product wraps at 32 bits, which is
+			   what scatters the colours. */
+			size_t probe = (size_t)(key * 2654435761u) &
+				       (cap - 1);
 
 			while (slot[probe] >= 0 &&
 			       (sw[slot[probe]].r != p[0] ||

@@ -217,6 +217,8 @@ static void walk_simple(size_t g, int contours, int dx, int dy)
 	size_t o = g + 10;
 	int points;
 
+	if (contours < 1)         /* A glyph that draws nothing. */
+		return;
 	if (contours > 64) {
 		fprintf(stderr, "outline: a glyph holds %d contours\n",
 			contours);
@@ -348,7 +350,7 @@ int main(int argc, char **argv)
 	size_t cmap, head, hhea, hmtx;
 	unsigned int em, advance;
 	const char *chars = CHARS;
-	int firsts[128], counts[128], n = 0;
+	int firsts[128] = { 0 }, counts[128] = { 0 }, n = 0;
 
 	if (argc != 2) {
 		fprintf(stderr, "usage: outline FONT.ttf > leaguemono.h\n");
@@ -360,18 +362,30 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	fseek(f, 0, SEEK_END);
-	font_len = (size_t)ftell(f);
+	{
+		long got = ftell(f);
+
+		if (got < 1) {
+			fprintf(stderr, "outline: %s gave no length\n",
+				argv[1]);
+			fclose(f);
+			return 1;
+		}
+		font_len = (size_t)got;
+	}
 	fseek(f, 0, SEEK_SET);
 	{
 		unsigned char *buf = malloc(font_len);
+		int ok = buf && fread(buf, 1, font_len, f) == font_len;
 
-		if (!buf || fread(buf, 1, font_len, f) != font_len) {
+		fclose(f);
+		if (!ok) {
 			fprintf(stderr, "outline: cannot read %s\n", argv[1]);
+			free(buf);
 			return 1;
 		}
 		font = buf;
 	}
-	fclose(f);
 
 	head = table("head");
 	cmap = table("cmap");

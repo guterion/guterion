@@ -52,8 +52,5 @@ void img_rect(struct image *im, int x0, int y0, int x1, int y1,
 int gif_write(const char *path, struct image *const *frames, int count,
 	      int delay_cs);
 
-/* Inflate a raw DEFLATE stream. The caller owns the result. */
-unsigned char *inflate_zlib(const unsigned char *src, size_t src_len,
-			    size_t *out_len);
 
 #endif /* IMG_H */
