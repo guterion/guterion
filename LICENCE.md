@@ -96,14 +96,24 @@ domain. Where a mark had to read against a dark
 canton, only its colour was changed; where a mark was cropped to its
 central figure, nothing else was altered.
 
-The bitmap letterforms in the stamps come from the Terminus font by
-Dimitar Zhekov,
-which carries the SIL Open Font License 1.1. That licence leaves a
-rendered document under its own terms, so the licence above governs
-these images. The attribution stands because the letterforms are the
-work of another author.
+## Letterforms
+
+Two typefaces set the text in these images, and both carry the SIL
+Open Font License 1.1. That licence leaves a rendered document under
+its own terms, so the licence above governs the images themselves. The
+attribution stands because the letterforms are the work of other
+authors.
+
+The stamps take their bitmap captions from Terminus, by Dimitar
+Zhekov. The glyphs sit in `tools/stamps.c` as bitmaps.
 
 <https://terminus-font.sourceforge.net/>
+
+The badges set their labels in League Mono Narrow Bold, by Tyler Finck
+for The League of Moveable Type. The outlines sit in
+`tools/leaguemono.h`, which `tools/text.c` draws and rasterises.
+
+<https://www.theleagueofmoveabletype.com/league-mono>
 
 ## The Gentoo logo
 

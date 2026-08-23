@@ -5,18 +5,18 @@ assets/badges/email.svg
 CC-BY-SA-4.0
 Social badge: EMAIL
 -->
-<svg xmlns="http://www.w3.org/2000/svg" width="99" height="20"
+<svg xmlns="http://www.w3.org/2000/svg" width="95" height="20"
      role="img" aria-label="EMAIL">
   <title>EMAIL</title>
   <linearGradient id="g" x2="0" y2="100%">
     <stop offset="0" stop-color="#fff" stop-opacity=".12"/>
     <stop offset="1" stop-opacity=".12"/>
   </linearGradient>
-  <rect width="99" height="20" rx="2" fill="#2f6f3a"/>
-  <rect width="99" height="20" rx="2" fill="url(#g)"/>
+  <rect width="95" height="20" rx="2" fill="#2f6f3a"/>
+  <rect width="95" height="20" rx="2" fill="url(#g)"/>
   <image x="7" y="4.0" width="18" height="12"
          href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAeCAYAAABXNvynAAACZElEQVR4nO2YvW4TQRSFz/U6BUhgIaBJ+jwATdJT0CMh5SXS0iCE+0jwAnRIpKJEygNEAipqHiBICIn8SFT2+qPYO+F6PHb8mxiJK628u3Pnnm/O7szu2gD0D0V7htxVD8ymSZoFeKqCq44ScC2pys5d+NbxdtQMYF7XU1+T1PLad31LgaRBzlICrgog55KeS/og6bb3qzW/67jOQNJvSU8lHUi6E3Ish216NjHw3x/Ae/5GP7T1gdfArTkhy+RwANSBox/03wI/I2MO/AtoA8+A736u9i3lfAV2Xazl+TblVgHmfXeBL0E/6eDajz3vdBLwKfDAE7eAw8ztnu/3gFdA23OvnLwhdwPohlr9zNVDYMtzH7qJEx2+B1RBaA84CaCx+GdgJ7jdKoBaOg9sA8dBM5pwAuyFfpWzXA0cACrf3wSOJrjdzZ0s7O8DZ2MGfgRsBtA0wJmAbQ7R7RkHewbsF24bmxt4zGWdFqB0OyWt42yAQ3oLAU+4xBdj3P7I6PLYD7ldYCOvuXTg4EZy+xHNxEuRg9d+nJary0maao3RWB5w7jbNOhyXqV4ATOcA3mR9xtZfCXDuELADfPI658A73/8GPAl5o4/b6wJOecG5iubx/cKPXwKd0DZ1zZUBB5EqO7ZxbYsAz/I+PDHMrHahlqSBmeGgAzOrl6WzNGBJMjPUvHam46WBpiguK+sc/4FXHaV72HzyGDf3D0DSHlmpSsA9nzw3+X8FkgT08oYc2CTdX+Zyt2B0lLlsDF931HxyD7TYZ/yikbRbaj79L6Fz4LWP0qVftwEM3RLFVeKaQOaKP2dtqomKlKBFAAAAAElFTkSuQmCC"/>
-  <text x="32" y="14" fill="#ffffff" font-size="10"
-        font-family="DejaVu Sans,Verdana,Geneva,sans-serif"
-        font-weight="bold">EMAIL</text>
+  <g transform="translate(32 14) scale(0.005500 -0.005500)">
+    <path fill="#ffffff" d="M966 1171L484 1171L484 803L868 803L868 573L484 573L484 229L966 229L966 0L178 0L178 1400L966 1400ZM1181 0L1245 1400L1569 1400L1713 685L1852 1400L2176 1400L2241 0L1970 0L1947 1000L1810 203L1612 203L1475 1007L1452 0ZM3017 0L2973 304L2706 304L2662 0L2338 0L2598 1400L3081 1400L3341 0ZM2837 1198L2740 533L2939 533L2843 1198ZM4393 1171L4149 1171L4149 229L4393 229L4393 0L3594 0L3594 229L3835 229L3835 1171L3594 1171L3594 1400L4393 1400ZM5094 229L5576 229L5576 0L4779 0L4779 1400L5094 1400Z"/>
+  </g>
 </svg>

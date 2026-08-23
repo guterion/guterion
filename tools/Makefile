@@ -41,16 +41,17 @@ OPTIMISE = -O3 -ffast-math -fno-finite-math-only -march=native \
 CFLAGS ?= $(HARDEN) $(OPTIMISE) -Wall -Wextra
 LDLIBS = -lm
 
-PROGRAMS = stamps blinkies badges localise check
+PROGRAMS = stamps blinkies badges localise check outline
 
 # --- BUILD ------------------------------------------------------------
 all: $(PROGRAMS)
 
 stamps: stamps.c img.c img.h
 blinkies: blinkies.c img.c img.h
-badges: badges.c
+badges: badges.c text.c img.c text.h img.h leaguemono.h
 localise: localise.c
 check: check.c
+outline: outline.c
 
 %: %.c
 	$(CC) $(CFLAGS) -I. -o $@ $(filter %.c,$^) $(LDLIBS)
@@ -61,17 +62,6 @@ check: check.c
 # the faces that the stamp program writes.
 assets: stamps blinkies badges
 	cd .. && tools/stamps && tools/blinkies && tools/badges
-	$(MAKE) raster
-
-# The badges also travel as PNG at twice the size, for a mail signature
-# and for anywhere else that shows no SVG. Rasterising a badge needs
-# DejaVu with antialiasing, which is a font library, so rsvg-convert
-# does that step. Run this after `assets`, or the PNG keep the badge
-# that the SVG no longer holds.
-raster:
-	cd ../assets/badges && for f in *.svg; do \
-		rsvg-convert -w 198 -h 40 "$$f" -o "email/$${f%.svg}@2x.png"; \
-	done
 
 pages: localise
 	cd .. && tools/localise
@@ -79,7 +69,14 @@ pages: localise
 verify: check
 	cd .. && tools/check
 
+# The badge letterforms. `leaguemono.h` is committed, so this runs by
+# hand, when the face changes. It needs the font file, which the
+# repository does not carry.
+font: outline
+	@test -n "$(FONT)" || { echo "name a face: make font FONT=/path/LeagueMono-NarrowBold.ttf"; exit 1; }
+	./outline "$(FONT)" > leaguemono.h
+
 clean:
 	rm -f $(PROGRAMS)
 
-.PHONY: all assets raster pages verify clean
+.PHONY: all assets pages verify font clean

@@ -1,0 +1,428 @@
+/*
+ * tools/outline.c
+ * @guterion
+ * CC-BY-SA-4.0
+ * Read a TrueType face and write the glyph table that the badges set
+ *
+ * The badges need outlines, not a font file: `text.c` draws them into
+ * SVG path data and rasterises them, so no reader has to hold the
+ * face. This program takes the face once and writes `leaguemono.h`.
+ *
+ * It reads the tables that a simple Latin face needs, and it stops
+ * with a message on anything further: a cmap that is not format 4, a
+ * component that carries a scale or a rotation, or a character the
+ * face does not hold. That is deliberate. A silent fallback would
+ * write a glyph that is wrong rather than one that is absent.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* The characters a badge label may hold. */
+#define CHARS " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-:/@&+"
+
+#define MAX_STROKES 4096
+#define MAX_POINTS 512
+
+/* --- BYTE ORDER ------------------------------------------------------- */
+
+static const unsigned char *font;
+static size_t font_len;
+
+static unsigned int u8(size_t o)
+{
+	if (o >= font_len) {
+		fprintf(stderr, "outline: read past the end of the file\n");
+		exit(1);
+	}
+	return font[o];
+}
+
+static unsigned int u16(size_t o)
+{
+	return (u8(o) << 8) | u8(o + 1);
+}
+
+static int s16(size_t o)
+{
+	return (int)(short)u16(o);
+}
+
+static unsigned int u32(size_t o)
+{
+	return (u16(o) << 16) | u16(o + 2);
+}
+
+/* --- TABLES ----------------------------------------------------------- */
+
+static size_t table(const char *tag)
+{
+	unsigned int n = u16(4);
+
+	for (unsigned int i = 0; i < n; i++) {
+		size_t rec = 12 + (size_t)i * 16;
+
+		if (!memcmp(font + rec, tag, 4))
+			return u32(rec + 8);
+	}
+	fprintf(stderr, "outline: the face carries no %s table\n", tag);
+	exit(1);
+}
+
+/* Map a code point through a format 4 cmap subtable. */
+static unsigned int glyph_of(size_t cmap, unsigned int cp)
+{
+	unsigned int n = u16(cmap + 2);
+	size_t sub = 0;
+
+	for (unsigned int i = 0; i < n; i++) {
+		size_t rec = cmap + 4 + (size_t)i * 8;
+		unsigned int plat = u16(rec), enc = u16(rec + 2);
+
+		/* Windows Unicode BMP, or Unicode proper. */
+		if ((plat == 3 && enc == 1) || plat == 0)
+			sub = cmap + u32(rec + 4);
+	}
+	if (!sub) {
+		fprintf(stderr, "outline: the face carries no Unicode cmap\n");
+		exit(1);
+	}
+	if (u16(sub) != 4) {
+		fprintf(stderr, "outline: cmap subtable is format %u, not 4\n",
+			u16(sub));
+		exit(1);
+	}
+
+	unsigned int segs = u16(sub + 6) / 2;
+	size_t ends = sub + 14;
+	size_t starts = ends + (size_t)segs * 2 + 2;
+	size_t deltas = starts + (size_t)segs * 2;
+	size_t ranges = deltas + (size_t)segs * 2;
+
+	for (unsigned int s = 0; s < segs; s++) {
+		unsigned int end = u16(ends + (size_t)s * 2);
+		unsigned int start = u16(starts + (size_t)s * 2);
+		int delta = s16(deltas + (size_t)s * 2);
+		unsigned int off = u16(ranges + (size_t)s * 2);
+
+		if (cp > end || cp < start)
+			continue;
+		if (!off)
+			return (cp + (unsigned int)delta) & 0xFFFF;
+		size_t at = ranges + (size_t)s * 2 + off + (cp - start) * 2;
+		unsigned int g = u16(at);
+
+		return g ? (g + (unsigned int)delta) & 0xFFFF : 0;
+	}
+	return 0;
+}
+
+/* --- OUTLINE ---------------------------------------------------------- */
+
+struct stroke_out {
+	char op;
+	int a, b, c, d;
+};
+
+static struct stroke_out strokes[MAX_STROKES];
+static int stroke_count;
+
+static void emit(char op, int a, int b, int c, int d)
+{
+	if (stroke_count == MAX_STROKES) {
+		fprintf(stderr, "outline: more strokes than the table holds\n");
+		exit(1);
+	}
+	strokes[stroke_count].op = op;
+	strokes[stroke_count].a = a;
+	strokes[stroke_count].b = b;
+	strokes[stroke_count].c = c;
+	strokes[stroke_count].d = d;
+	stroke_count++;
+}
+
+static size_t loca, glyf;
+static int long_loca;
+
+static void walk_glyph(unsigned int gid, int dx, int dy, int depth);
+
+/* Turn the points of one contour into the strokes that draw it. */
+static void walk_contour(const int *xs, const int *ys, const unsigned char *on,
+			 int first, int last, int dx, int dy)
+{
+	int n = last - first + 1;
+	int start = -1;
+	int sx, sy;
+
+	if (n < 2)
+		return;
+	for (int i = 0; i < n; i++)
+		if (on[first + i]) {
+			start = i;
+			break;
+		}
+
+	if (start < 0) {
+		/* No on-curve point: the contour starts halfway between
+		   the last off-curve point and the first. */
+		sx = (xs[first] + xs[last]) / 2;
+		sy = (ys[first] + ys[last]) / 2;
+		start = 0;
+		emit('M', sx + dx, sy + dy, 0, 0);
+	} else {
+		sx = xs[first + start];
+		sy = ys[first + start];
+		emit('M', sx + dx, sy + dy, 0, 0);
+		start++;
+	}
+
+	for (int k = 0; k < n; k++) {
+		int i = first + (start + k) % n;
+
+		if (on[i]) {
+			emit('L', xs[i] + dx, ys[i] + dy, 0, 0);
+			continue;
+		}
+		/* An off-curve point controls a curve; the point that
+		   ends it is the next on-curve point, or the midpoint
+		   between this control and the next one. */
+		int j = first + (start + k + 1) % n;
+		int ex, ey;
+
+		if (on[j]) {
+			ex = xs[j];
+			ey = ys[j];
+			k++;
+		} else {
+			ex = (xs[i] + xs[j]) / 2;
+			ey = (ys[i] + ys[j]) / 2;
+		}
+		emit('Q', xs[i] + dx, ys[i] + dy, ex + dx, ey + dy);
+	}
+	/* The close already draws the line home, so drop it when the
+	   walk ended on the point it started from. */
+	if (stroke_count && strokes[stroke_count - 1].op == 'L' &&
+	    strokes[stroke_count - 1].a == sx + dx &&
+	    strokes[stroke_count - 1].b == sy + dy)
+		stroke_count--;
+	emit('Z', 0, 0, 0, 0);
+}
+
+static void walk_simple(size_t g, int contours, int dx, int dy)
+{
+	int ends[64];
+	int xs[MAX_POINTS], ys[MAX_POINTS];
+	unsigned char on[MAX_POINTS];
+	size_t o = g + 10;
+	int points;
+
+	if (contours > 64) {
+		fprintf(stderr, "outline: a glyph holds %d contours\n",
+			contours);
+		exit(1);
+	}
+	for (int i = 0; i < contours; i++)
+		ends[i] = (int)u16(o + (size_t)i * 2);
+	points = ends[contours - 1] + 1;
+	if (points > MAX_POINTS) {
+		fprintf(stderr, "outline: a glyph holds %d points\n", points);
+		exit(1);
+	}
+	o += (size_t)contours * 2;
+	o += 2 + u16(o);                       /* Skip the instructions. */
+
+	/* One flag byte for each point, though a flag may repeat. */
+	unsigned char flags[MAX_POINTS];
+
+	for (int i = 0; i < points; ) {
+		unsigned int f = u8(o++);
+
+		flags[i++] = (unsigned char)f;
+		if (f & 8) {
+			unsigned int rep = u8(o++);
+
+			while (rep-- && i < points)
+				flags[i++] = (unsigned char)f;
+		}
+	}
+
+	int v = 0;
+
+	for (int i = 0; i < points; i++) {
+		if (flags[i] & 2)
+			v += (flags[i] & 16) ? (int)u8(o++) : -(int)u8(o++);
+		else if (!(flags[i] & 16)) {
+			v += s16(o);
+			o += 2;
+		}
+		xs[i] = v;
+	}
+	v = 0;
+	for (int i = 0; i < points; i++) {
+		if (flags[i] & 4)
+			v += (flags[i] & 32) ? (int)u8(o++) : -(int)u8(o++);
+		else if (!(flags[i] & 32)) {
+			v += s16(o);
+			o += 2;
+		}
+		ys[i] = v;
+		on[i] = (unsigned char)(flags[i] & 1);
+	}
+
+	int first = 0;
+
+	for (int c = 0; c < contours; c++) {
+		walk_contour(xs, ys, on, first, ends[c], dx, dy);
+		first = ends[c] + 1;
+	}
+}
+
+static void walk_composite(size_t g, int dx, int dy, int depth)
+{
+	size_t o = g + 10;
+	unsigned int flags;
+
+	do {
+		flags = u16(o);
+		unsigned int index = u16(o + 2);
+		int a1, a2;
+
+		o += 4;
+		if (flags & 1) {                     /* Words, not bytes. */
+			a1 = s16(o);
+			a2 = s16(o + 2);
+			o += 4;
+		} else {
+			a1 = (signed char)u8(o);
+			a2 = (signed char)u8(o + 1);
+			o += 2;
+		}
+		if (!(flags & 2)) {
+			fprintf(stderr,
+				"outline: a component aligns by point, "
+				"which this reader does not do\n");
+			exit(1);
+		}
+		if (flags & (8 | 64 | 128)) {
+			fprintf(stderr,
+				"outline: a component carries a scale, "
+				"which this reader does not do\n");
+			exit(1);
+		}
+		walk_glyph(index, dx + a1, dy + a2, depth + 1);
+	} while (flags & 32);                        /* More components. */
+}
+
+static void walk_glyph(unsigned int gid, int dx, int dy, int depth)
+{
+	size_t g, next;
+	int contours;
+
+	if (depth > 4) {
+		fprintf(stderr, "outline: components nest too deeply\n");
+		exit(1);
+	}
+	if (long_loca) {
+		g = glyf + u32(loca + (size_t)gid * 4);
+		next = glyf + u32(loca + (size_t)gid * 4 + 4);
+	} else {
+		g = glyf + (size_t)u16(loca + (size_t)gid * 2) * 2;
+		next = glyf + (size_t)u16(loca + (size_t)gid * 2 + 2) * 2;
+	}
+	if (g == next)                               /* An empty glyph. */
+		return;
+
+	contours = s16(g);
+	if (contours >= 0)
+		walk_simple(g, contours, dx, dy);
+	else
+		walk_composite(g, dx, dy, depth);
+}
+
+/* --- OUTPUT ----------------------------------------------------------- */
+
+int main(int argc, char **argv)
+{
+	FILE *f;
+	size_t cmap, head, hhea, hmtx;
+	unsigned int em, advance;
+	const char *chars = CHARS;
+	int firsts[128], counts[128], n = 0;
+
+	if (argc != 2) {
+		fprintf(stderr, "usage: outline FONT.ttf > leaguemono.h\n");
+		return 1;
+	}
+	f = fopen(argv[1], "rb");
+	if (!f) {
+		fprintf(stderr, "outline: cannot open %s\n", argv[1]);
+		return 1;
+	}
+	fseek(f, 0, SEEK_END);
+	font_len = (size_t)ftell(f);
+	fseek(f, 0, SEEK_SET);
+	{
+		unsigned char *buf = malloc(font_len);
+
+		if (!buf || fread(buf, 1, font_len, f) != font_len) {
+			fprintf(stderr, "outline: cannot read %s\n", argv[1]);
+			return 1;
+		}
+		font = buf;
+	}
+	fclose(f);
+
+	head = table("head");
+	cmap = table("cmap");
+	loca = table("loca");
+	glyf = table("glyf");
+	hhea = table("hhea");
+	hmtx = table("hmtx");
+	em = u16(head + 18);
+	long_loca = s16(head + 50);
+	advance = 0;
+
+	for (const char *p = chars; *p; p++) {
+		unsigned int gid = glyph_of(cmap, (unsigned char)*p);
+		unsigned int metrics = u16(hhea + 34);
+		unsigned int step;
+
+		if (!gid && *p != ' ') {
+			fprintf(stderr, "outline: the face has no '%c'\n", *p);
+			return 1;
+		}
+		/* A face lists one advance for each of the first
+		   `metrics` glyphs, then repeats the last for the rest. */
+		step = u16(hmtx + (size_t)(gid < metrics ? gid
+						        : metrics - 1) * 4);
+		if (!advance)
+			advance = step;
+		if (step != advance) {
+			fprintf(stderr, "outline: '%c' advances %u, not %u; "
+					"the badges need one width\n",
+				*p, step, advance);
+			return 1;
+		}
+		firsts[n] = stroke_count;
+		walk_glyph(gid, 0, 0, 0);
+		counts[n] = stroke_count - firsts[n];
+		n++;
+	}
+
+	printf("/* Generated by tools/outline.c from %s. */\n", argv[1]);
+	printf("static const struct stroke STROKES[] = {\n");
+	for (int i = 0; i < stroke_count; i++)
+		printf("\t{ '%c', %5d, %5d, %5d, %5d },\n", strokes[i].op,
+		       strokes[i].a, strokes[i].b, strokes[i].c, strokes[i].d);
+	printf("};\n\nstatic const struct glyph GLYPHS[] = {\n");
+	for (int i = 0; i < n; i++)
+		printf("\t{ %3d, %5d, %4d },   /* %s */\n",
+		       (unsigned char)chars[i], firsts[i], counts[i],
+		       chars[i] == ' ' ? "space" : (char[2]){ chars[i], 0 });
+	printf("\t{ 0, 0, 0 }\n};\n");
+
+	fprintf(stderr, "  em %u, advance %u, %d glyphs, %d strokes\n",
+		em, advance, n, stroke_count);
+	return 0;
+}

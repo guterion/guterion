@@ -4,54 +4,38 @@
  * CC-BY-SA-4.0
  * Generate the social badges, each carrying its own logotype
  *
- *     $FILC/build/bin/clang -g -O -o tools/badges tools/badges.c
- *
  * A badge is twenty pixels tall, the height at which a Markdown list
  * bullet sits level with it. The mark travels inside the SVG as a
  * base64 data URI, so a badge needs no other host.
  *
- * Every badge takes the width of the widest one, which lines the column
- * up. The advance widths below were measured once with FreeType; the C
- * needs no font library at run time.
+ * Every badge takes the width of the widest one, which lines the
+ * column up. The label is set in League Mono Narrow Bold, whose
+ * outlines `text.c` carries: the SVG receives them as a path, so the
+ * badge looks the same to a reader who holds no such font, and the
+ * PNG receives them as coverage that the same file rasterises.
+ *
+ * Each badge is written twice. The SVG is what the pages carry. The
+ * PNG at twice the size goes to a mail signature, and anywhere else
+ * that shows no SVG.
  */
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
+#include "img.h"
+#include "text.h"
+
 #define HEIGHT 20
 #define MARK 12          /* Height of the logotype inside the badge. */
 #define PAD 7
 #define MARK_COLUMN 18   /* Fixed column keeps every label on one axis. */
-
-/*
- * The width of each label in DejaVu Sans Bold at 10px, measured once
- * with FreeType. A whole label is measured, never the sum of its
- * characters, because DejaVu kerns pairs such as "AY" and "PA": the
- * sum overstates LIBERAPAY by nearly two pixels.
- *
- * A new label needs a new measurement. Take it with:
- *
- *     python3 -c 'from PIL import ImageFont; \
- *         f = ImageFont.truetype("/usr/share/fonts/dejavu/\
- * DejaVuSans-Bold.ttf", 10); print(f.getlength("LABEL"))'
- */
-static const struct { const char *label; float w; } LABELS[] = {
-	{ "EMAIL",       34.6094f },
-	{ "GPG",         23.7344f },
-	{ "GIT",         18.7500f },
-	{ "ORCID",       35.5625f },
-	{ "LINKEDIN",    53.4375f },
-	{ "X",           7.7031f },
-	{ "LIBERAPAY",   60.4062f },
-	{ "CORREO",      46.5781f },
-	{ "EPISTULA",    54.1406f },
-	{ "CLAVIS",      39.4375f },
-	{ "VENTURAS",    60.5312f },
-	{ "MI PORTAL",   60.3906f },
-	{ NULL, 0.0f }
-};
+#define TEXT_SIZE 11     /* The label, in pixels from ascender to descender. */
+#define BASELINE 14      /* Where the label sits, measured from the top. */
+#define RADIUS 2         /* The corner the field turns. */
+#define PNG_SCALE 2      /* The PNG carries twice the pixels of the SVG. */
 
 /* One badge: the file it writes, its label, field colour, mark and ink. */
 struct badge {
@@ -91,28 +75,36 @@ static const struct badge SET[] = {
 	{ NULL, NULL, NULL, NULL, 0.0, NULL, NULL, NULL }
 };
 
+/*
+ * A badge label is set in capitals. The set is a wall of small marks,
+ * and one lowercase label among them reads as a different object.
+ * Only the ASCII letters change, so a letter that arrives as UTF-8
+ * passes through whole rather than breaking into halves.
+ */
+static const char *capitalise(const struct badge *b, char *buf, size_t n)
+{
+	size_t i = 0;
+
+	for (const char *p = b->label; *p && i + 1 < n; p++, i++)
+		buf[i] = (*p >= 'a' && *p <= 'z') ? (char)(*p - 32) : *p;
+	buf[i] = '\0';
+	return buf;
+}
+
 /* The ORCID display rules set a minimum size for their mark. */
 static int mark_height(const struct badge *b)
 {
 	return strcmp(b->mark, "orcid") ? MARK : 16;
 }
 
-/* Look the label up. An unmeasured label stops the run. */
-static double text_width(const char *label)
-{
-	for (int i = 0; LABELS[i].label; i++)
-		if (!strcmp(LABELS[i].label, label))
-			return LABELS[i].w;
-
-	fprintf(stderr, "badges: no measurement for \"%s\"; "
-			"see the note above LABELS\n", label);
-	exit(1);
-}
-
 /* Every label starts at the same column, so only the text varies. */
 static int badge_width(const struct badge *b)
 {
-	return PAD + MARK_COLUMN + 7 + (int)text_width(b->label) + PAD;
+	char label[64];
+
+	return PAD + MARK_COLUMN + 7 +
+	       (int)text_advance(capitalise(b, label, sizeof label), TEXT_SIZE) +
+	       PAD;
 }
 
 static const char B64[] =
@@ -168,6 +160,109 @@ static unsigned char *slurp(const char *path, size_t *len)
 	return buf;
 }
 
+/* --- THE FIELD -------------------------------------------------------- */
+
+/*
+ * Paint the field: the colour, the rounded corner, and the sheen that
+ * the SVG draws with a gradient. The gradient runs from white at
+ * twelve per cent down to black at the same, so the top lifts and the
+ * bottom settles.
+ */
+static void paint_field(struct image *im, unsigned int rgb, int scale)
+{
+	double radius = (double)RADIUS * scale;
+	unsigned char base[3] = {
+		(unsigned char)(rgb >> 16), (unsigned char)(rgb >> 8),
+		(unsigned char)rgb
+	};
+
+	for (int y = 0; y < im->h; y++) {
+		double t = (double)y / (im->h - 1);
+		/* The gradient colour at this row, at .12 opacity. */
+		double sheen = 255.0 * (1.0 - t);
+		double k = 0.12;
+
+		for (int x = 0; x < im->w; x++) {
+			unsigned char *d = im->px + ((size_t)y * im->w + x) * 4;
+			double cover = 1.0;
+			double dx = 0, dy = 0;
+
+			/* Distance past the corner arc, for the alpha. */
+			if (x < radius && y < radius) {
+				dx = radius - 0.5 - x;
+				dy = radius - 0.5 - y;
+			} else if (x >= im->w - radius && y < radius) {
+				dx = x - (im->w - radius - 0.5);
+				dy = radius - 0.5 - y;
+			} else if (x < radius && y >= im->h - radius) {
+				dx = radius - 0.5 - x;
+				dy = y - (im->h - radius - 0.5);
+			} else if (x >= im->w - radius && y >= im->h - radius) {
+				dx = x - (im->w - radius - 0.5);
+				dy = y - (im->h - radius - 0.5);
+			}
+			if (dx > 0 || dy > 0) {
+				double r = sqrt(dx * dx + dy * dy);
+
+				cover = radius + 0.5 - r;
+				if (cover > 1.0)
+					cover = 1.0;
+				if (cover < 0.0)
+					cover = 0.0;
+			}
+
+			for (int c = 0; c < 3; c++) {
+				double v = base[c] * (1 - k) + sheen * k;
+
+				d[c] = (unsigned char)(v + 0.5);
+			}
+			d[3] = (unsigned char)(255 * cover + 0.5);
+		}
+	}
+}
+
+/* Compose one badge as pixels, at the given multiple of its size. */
+static struct image *badge_image(const struct badge *b, const char *label,
+				 int width, int scale)
+{
+	struct image *im = img_new(width * scale, HEIGHT * scale);
+	struct image *mark;
+	struct image *fitted;
+	char path[512];
+	int mark_h = mark_height(b) * scale;
+	int mark_w;
+	unsigned int ink;
+
+	if (!im)
+		return NULL;
+	paint_field(im, (unsigned int)strtoul(b->colour + 1, NULL, 16), scale);
+
+	snprintf(path, sizeof path, "tools/marks/%s.png", b->mark);
+	mark = png_read(path);
+	if (!mark) {
+		fprintf(stderr, "cannot read %s\n", path);
+		exit(1);
+	}
+	mark_w = (int)(mark_h * b->mark_ratio + 0.5);
+	if (mark_w < 1)
+		mark_w = 1;
+	fitted = img_scale(mark, mark_w, mark_h);
+	img_free(mark);
+	if (!fitted) {
+		img_free(im);
+		return NULL;
+	}
+	img_over(im, fitted, PAD * scale, (HEIGHT * scale - mark_h) / 2);
+	img_free(fitted);
+
+	ink = (unsigned int)strtoul(b->ink + 1, NULL, 16);
+	text_draw(im, label, (double)(PAD + MARK_COLUMN + 7) * scale,
+		  (double)BASELINE * scale, (double)TEXT_SIZE * scale,
+		  (unsigned char)(ink >> 16), (unsigned char)(ink >> 8),
+		  (unsigned char)ink);
+	return im;
+}
+
 static void write_badge(const struct badge *b, int width)
 {
 	char mark_path[256], out_path[256];
@@ -175,12 +270,22 @@ static void write_badge(const struct badge *b, int width)
 	size_t mark_len;
 	char *encoded;
 	FILE *f;
+	char label[64];
+	char glyph_path[8192];
+	struct image *raster;
 	int mark_h = mark_height(b);
 	int mark_w = (int)(mark_h * b->mark_ratio + 0.5);
 
 	if (mark_w < 1)
 		mark_w = 1;
 
+	capitalise(b, label, sizeof label);
+	if (text_path(glyph_path, sizeof glyph_path, label) >=
+	    sizeof glyph_path) {
+		fprintf(stderr, "badges: outline of \"%s\" needs more room\n",
+			label);
+		exit(1);
+	}
 	snprintf(mark_path, sizeof mark_path, "tools/marks/%s.png", b->mark);
 	mark_data = slurp(mark_path, &mark_len);
 	encoded = base64(mark_data, mark_len);
@@ -206,7 +311,7 @@ static void write_badge(const struct badge *b, int width)
 		"CC-BY-SA-4.0\n"
 		"%s badge: %s\n",
 		b->name, b->author ? b->author : "@guterion",
-		b->theme ? "Web" : "Social", b->label);
+		b->theme ? "Web" : "Social", label);
 
 	if (b->theme)
 		fprintf(f,
@@ -230,18 +335,36 @@ static void write_badge(const struct badge *b, int width)
 		"  <rect width=\"%d\" height=\"%d\" rx=\"2\" fill=\"url(#g)\"/>\n"
 		"  <image x=\"%d\" y=\"%.1f\" width=\"%d\" height=\"%d\"\n"
 		"         href=\"data:image/png;base64,%s\"/>\n"
-		"  <text x=\"%d\" y=\"14\" fill=\"%s\" font-size=\"10\"\n"
-		"        font-family=\"DejaVu Sans,Verdana,Geneva,sans-serif\"\n"
-		"        font-weight=\"bold\">%s</text>\n"
+		"  <g transform=\"translate(%d %d) scale(%.6f -%.6f)\">\n"
+		"    <path fill=\"%s\" d=\"%s\"/>\n"
+		"  </g>\n"
 		"</svg>\n",
-		width, HEIGHT, b->label, b->label,
+		width, HEIGHT, label, label,
 		width, HEIGHT, b->colour, width, HEIGHT,
 		PAD, (HEIGHT - mark_h) / 2.0, mark_w, mark_h, encoded,
-		PAD + MARK_COLUMN + 7, b->ink, b->label);
+		PAD + MARK_COLUMN + 7, BASELINE,
+		text_scale(TEXT_SIZE), text_scale(TEXT_SIZE),
+		b->ink, glyph_path);
 
 	fclose(f);
 	free(encoded);
-	printf("  %-16s %4dx%d  %s\n", b->name, width, HEIGHT, b->label);
+
+	/* The same outline, now as pixels. */
+	raster = badge_image(b, label, width, PNG_SCALE);
+	if (!raster) {
+		fprintf(stderr, "cannot compose %s\n", b->name);
+		exit(1);
+	}
+	mkdir("assets/badges/email", 0755);
+	snprintf(out_path, sizeof out_path,
+		 "assets/badges/email/%s@%dx.png", b->name, PNG_SCALE);
+	if (png_write(out_path, raster)) {
+		fprintf(stderr, "cannot write %s\n", out_path);
+		exit(1);
+	}
+	img_free(raster);
+
+	printf("  %-16s %4dx%d  %s\n", b->name, width, HEIGHT, label);
 }
 
 int main(void)
