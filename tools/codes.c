@@ -8,10 +8,11 @@
  * text below it come from one source and cannot drift apart.
  *
  * Each symbol takes a different version, because the addresses differ
- * in length. Widening the quiet zone brings them all to one width, so
- * the row reads evenly and no browser has to resample anything: the
- * quiet zone is white margin the standard already requires, and more
- * of it costs a reader nothing.
+ * in length. What the eye compares across the row is the size of the
+ * symbol itself, so each one takes the scale that brings it closest to
+ * one width. The canvas around it then differs a little, which reads
+ * evenly, where a fixed canvas would leave the short address as a
+ * small symbol floating in white.
  */
 
 #include <stdio.h>
@@ -22,8 +23,8 @@
 #include "img.h"
 #include "qr.h"
 
-#define SCALE 4          /* Pixels for each module. */
-#define WIDTH 53         /* Modules across, symbol and quiet zone. */
+#define TARGET 148       /* The width each symbol aims for, in pixels. */
+#define QUIET 4          /* Modules of white margin, as the standard asks. */
 
 static const struct {
 	const char *name;
@@ -46,7 +47,7 @@ int main(void)
 		struct qr *q = qr_make(CODES[i].text);
 		struct image *im;
 		char path[128];
-		int quiet, side = WIDTH * SCALE;
+		int scale, side;
 
 		if (!q) {
 			fprintf(stderr, "codes: %s needs a version this "
@@ -54,13 +55,11 @@ int main(void)
 				CODES[i].name);
 			return 1;
 		}
-		if (q->size > WIDTH - 8) {
-			fprintf(stderr, "codes: %s spans %d modules, which "
-					"leaves no quiet zone at %d\n",
-				CODES[i].name, q->size, WIDTH);
-			return 1;
-		}
-		quiet = (WIDTH - q->size) / 2;
+		/* The scale that puts this symbol nearest the target. */
+		scale = (TARGET + q->size / 2) / q->size;
+		if (scale < 1)
+			scale = 1;
+		side = (q->size + QUIET * 2) * scale;
 
 		im = img_new(side, side);
 		if (!im)
@@ -72,10 +71,10 @@ int main(void)
 
 				if (!q->m[y * q->size + x])
 					continue;
-				px = (x + quiet) * SCALE;
-				py = (y + quiet) * SCALE;
-				img_fill(im, px, py, px + SCALE - 1,
-					 py + SCALE - 1, 0x000000);
+				px = (x + QUIET) * scale;
+				py = (y + QUIET) * scale;
+				img_fill(im, px, py, px + scale - 1,
+					 py + scale - 1, 0x000000);
 			}
 
 		snprintf(path, sizeof path, "assets/qr/%s.png", CODES[i].name);
@@ -83,8 +82,9 @@ int main(void)
 			fprintf(stderr, "codes: cannot write %s\n", path);
 			return 1;
 		}
-		printf("  %-12s version %d, %dx%d px\n", CODES[i].name,
-		       (q->size - 17) / 4, side, side);
+		printf("  %-12s version %d, symbol %d px, canvas %d px\n",
+		       CODES[i].name, (q->size - 17) / 4,
+		       q->size * scale, side);
 		img_free(im);
 		qr_free(q);
 	}

@@ -147,14 +147,20 @@ El correo es la mejor forma de contactarme. Respondo apenas puedo.
 </tr>
 </table>
 
-La dirección de Ethereum recibe ETH, USDC y USDT en la propia red
-Ethereum. Un token enviado por otra cadena no llega a ninguna parte.
+La dirección de Ethereum recibe también ETH, USDC y USDT en la propia red Ethereum.
 
-<p align="center">
-<img src="../../assets/qr/monero.png" width="106" alt="Dirección de Monero en código QR">
-<img src="../../assets/qr/lightning.png" width="106" alt="Dirección de Lightning en código QR">
-<img src="../../assets/qr/ethereum.png" width="106" alt="Dirección de Ethereum en código QR">
-</p>
+<table>
+<tr>
+<td align="center"><img src="../../assets/badges/monero.svg" height="20" alt="Monero"></td>
+<td align="center"><img src="../../assets/badges/lightning.svg" height="20" alt="Bitcoin por Lightning"></td>
+<td align="center"><img src="../../assets/badges/ethereum.svg" height="20" alt="Ethereum"></td>
+</tr>
+<tr>
+<td align="center"><img src="../../assets/qr/monero.png" width="148" alt="Dirección de Monero en código QR"></td>
+<td align="center"><img src="../../assets/qr/lightning.png" width="148" alt="Dirección de Lightning en código QR"></td>
+<td align="center"><img src="../../assets/qr/ethereum.png" width="148" alt="Dirección de Ethereum en código QR"></td>
+</tr>
+</table>
 
 </details>
 
@@ -176,10 +182,11 @@ Ethereum. Un token enviado por otra cadena no llega a ninguna parte.
 <p align="center">
 <a href="https://github.com/guterion?tab=followers"><img src="https://img.shields.io/github/followers/guterion?label=Seguidores&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Seguidores en GitHub"></a>
 <a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/github/stars/guterion?label=Estrellas&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Estrellas en GitHub"></a>
+<a href="https://github.com/search?q=author%3Aguterion&amp;type=commits"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Fsearch%2Fcommits%3Fq%3Dauthor%3Aguterion&amp;query=%24.total_count&amp;label=Confirmaciones&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Confirmaciones escritas"></a>
 <a href="https://github.com/search?q=author%3Aguterion+type%3Aissue&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Aissue&amp;label=Incidencias&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Incidencias abiertas"></a>
+<a href="https://github.com/search?q=author%3Aguterion+type%3Apr&amp;type=pullrequests"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Apr&amp;label=Solicitudes&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Solicitudes abiertas"></a>
 <a href="https://github.com/search?q=involves%3Aguterion&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=involves%3Aguterion&amp;label=Hilos&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Hilos en los que participa"></a>
 <a href="https://github.com/search?q=commenter%3Aguterion&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=commenter%3Aguterion&amp;label=Comentarios&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Hilos comentados"></a>
-<a href="https://github.com/guterion"><img src="https://img.shields.io/github/created-at/guterion/guterion?label=Desde&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Cuenta abierta desde"></a>
 </p>
 
 </details>

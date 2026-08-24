@@ -147,14 +147,20 @@ Email is the best way to reach me. I answer as soon as I can.
 </tr>
 </table>
 
-The Ethereum address takes ETH, USDC and USDT on Ethereum itself. A
-token sent over another chain arrives nowhere.
+The Ethereum address takes ETH, USDC and USDT on Ethereum itself too.
 
-<p align="center">
-<img src="../../assets/qr/monero.png" width="106" alt="Monero address as a QR code">
-<img src="../../assets/qr/lightning.png" width="106" alt="Lightning address as a QR code">
-<img src="../../assets/qr/ethereum.png" width="106" alt="Ethereum address as a QR code">
-</p>
+<table>
+<tr>
+<td align="center"><img src="../../assets/badges/monero.svg" height="20" alt="Monero"></td>
+<td align="center"><img src="../../assets/badges/lightning.svg" height="20" alt="Bitcoin over Lightning"></td>
+<td align="center"><img src="../../assets/badges/ethereum.svg" height="20" alt="Ethereum"></td>
+</tr>
+<tr>
+<td align="center"><img src="../../assets/qr/monero.png" width="148" alt="Monero address as a QR code"></td>
+<td align="center"><img src="../../assets/qr/lightning.png" width="148" alt="Lightning address as a QR code"></td>
+<td align="center"><img src="../../assets/qr/ethereum.png" width="148" alt="Ethereum address as a QR code"></td>
+</tr>
+</table>
 
 </details>
 
@@ -176,10 +182,11 @@ token sent over another chain arrives nowhere.
 <p align="center">
 <a href="https://github.com/guterion?tab=followers"><img src="https://img.shields.io/github/followers/guterion?label=Followers&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="GitHub followers"></a>
 <a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/github/stars/guterion?label=Stars&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="GitHub stars"></a>
+<a href="https://github.com/search?q=author%3Aguterion&amp;type=commits"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Fsearch%2Fcommits%3Fq%3Dauthor%3Aguterion&amp;query=%24.total_count&amp;label=Commits&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Commits authored"></a>
 <a href="https://github.com/search?q=author%3Aguterion+type%3Aissue&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Aissue&amp;label=Issues&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Issues opened"></a>
+<a href="https://github.com/search?q=author%3Aguterion+type%3Apr&amp;type=pullrequests"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Apr&amp;label=Pull%20requests&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Pull requests opened"></a>
 <a href="https://github.com/search?q=involves%3Aguterion&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=involves%3Aguterion&amp;label=Threads&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Threads taken part in"></a>
 <a href="https://github.com/search?q=commenter%3Aguterion&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=commenter%3Aguterion&amp;label=Comments&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Threads commented on"></a>
-<a href="https://github.com/guterion"><img src="https://img.shields.io/github/created-at/guterion/guterion?label=Since&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Account open since"></a>
 </p>
 
 </details>
