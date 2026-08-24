@@ -133,10 +133,27 @@ Epistula optima via est ad me contingendum. Respondeo cum primum possum.
 <td><a href="https://liberapay.com/guterion/">liberapay.com/guterion</a></td>
 </tr>
 <tr>
-<td><b>Monero</b></td>
+<td><img src="../../assets/badges/monero.svg" height="20" alt="Monero"></td>
 <td><code>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</code></td>
 </tr>
+<tr>
+<td><img src="../../assets/badges/lightning.svg" height="20" alt="Bitcoin per Lightning"></td>
+<td><code>guterion@cake.cash</code></td>
+</tr>
+<tr>
+<td><img src="../../assets/badges/ethereum.svg" height="20" alt="Ethereum"></td>
+<td><code>0xe9D6A00754FF22B092A7e9bC1b397517c2281291</code></td>
+</tr>
 </table>
+
+Inscriptio Ethereum accipit ETH, USDC et USDT in ipsa rete
+Ethereum. Nummus per aliam catenam missus nusquam pervenit.
+
+<p align="center">
+<img src="../../assets/qr/monero.png" width="106" alt="Inscriptio Monero in codice QR">
+<img src="../../assets/qr/lightning.png" width="106" alt="Inscriptio Lightning in codice QR">
+<img src="../../assets/qr/ethereum.png" width="106" alt="Inscriptio Ethereum in codice QR">
+</p>
 
 </details>
 
@@ -159,7 +176,9 @@ Epistula optima via est ad me contingendum. Respondeo cum primum possum.
 <a href="https://github.com/guterion?tab=followers"><img src="https://img.shields.io/github/followers/guterion?label=Sectatores&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Sectatores in GitHub"></a>
 <a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/github/stars/guterion?label=Stellae&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Stellae in GitHub"></a>
 <a href="https://github.com/search?q=author%3Aguterion+type%3Aissue&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Aissue&amp;label=Quaestiones&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Quaestiones apertae"></a>
-<a href="https://github.com/search?q=author%3Aguterion+type%3Apr&amp;type=pullrequests"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Apr&amp;label=Petitiones&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Petitiones apertae"></a>
+<a href="https://github.com/search?q=involves%3Aguterion&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=involves%3Aguterion&amp;label=Colloquia&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Colloquia quibus interfuit"></a>
+<a href="https://github.com/search?q=commenter%3Aguterion&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=commenter%3Aguterion&amp;label=Commentarii&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Colloquia commentata"></a>
+<a href="https://github.com/guterion"><img src="https://img.shields.io/github/created-at/guterion/guterion?label=Ab%20anno&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Ratio aperta ab"></a>
 </p>
 
 </details>

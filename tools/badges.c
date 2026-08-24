@@ -72,6 +72,9 @@ static const struct badge SET[] = {
 	  "FRANKOVIA Venturas SpA", "Lumen" },
 	{ "guterion-net", "MI PORTAL", "#073832", "web",       1.0,          "#65f7cf",
 	  "@guterion", "Terminal" },
+	{ "monero",       "MONERO",    "#f26822", "monero",    1.0,          "#ffffff", NULL, NULL },
+	{ "lightning",    "LIGHTNING", "#b46b1c", "bitcoin",   76.0 / 101.0, "#ffffff", NULL, NULL },
+	{ "ethereum",     "ETHEREUM",  "#454a75", "ethereum",  90.0 / 148.0, "#ffffff", NULL, NULL },
 	{ NULL, NULL, NULL, NULL, 0.0, NULL, NULL, NULL }
 };
 

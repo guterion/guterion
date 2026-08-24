@@ -41,7 +41,7 @@ OPTIMISE = -O3 -ffast-math -fno-finite-math-only -march=native \
 CFLAGS ?= $(HARDEN) $(OPTIMISE) -Wall -Wextra
 LDLIBS = -lm
 
-PROGRAMS = stamps blinkies badges localise check outline
+PROGRAMS = stamps blinkies badges codes localise check outline
 
 # --- BUILD ------------------------------------------------------------
 all: $(PROGRAMS)
@@ -49,6 +49,7 @@ all: $(PROGRAMS)
 stamps: stamps.c img.c img.h
 blinkies: blinkies.c img.c img.h
 badges: badges.c text.c img.c text.h img.h leaguemono.h
+codes: codes.c qr.c img.c qr.h img.h
 localise: localise.c
 check: check.c
 outline: outline.c
@@ -61,7 +62,7 @@ outline: outline.c
 # recipe below runs there. The stamps come first: the animation reads
 # the faces that the stamp program writes.
 assets: stamps blinkies badges
-	cd .. && tools/stamps && tools/blinkies && tools/badges
+	cd .. && tools/stamps && tools/blinkies && tools/badges && tools/codes
 
 pages: localise
 	cd .. && tools/localise

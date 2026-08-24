@@ -39,6 +39,7 @@ licence above:
 |------------------------------------|------------------------------------|
 | `assets/stamps/*.gif`              | The stamp set                      |
 | `assets/badges/*.svg`              | The social badges                  |
+| `assets/qr/*.png`                  | The payment addresses, as QR       |
 | `tools/*`                          | The generators                     |
 | `assets/logos/shell.png`           | The chevron prompt mark            |
 | `assets/logos/phosphorus.svg`      | The alchemical sign of phosphorus  |
@@ -87,6 +88,9 @@ source, with attribution as each licence requires:
 | `assets/logos/laroja.png` | Federación de Fútbol de Chile badge | Public domain |
 | `assets/logos/clang.png` | The C programming language logo | CC BY-SA 4.0 |
 | `assets/logos/openbsd.png` | Puffy, by Ty Semaka | CC BY 1.0 |
+| `tools/marks/monero.png` | Monero logo, by The Monero Project | Public domain |
+| `tools/marks/bitcoin.png` | Bitcoin sign | Public domain |
+| `tools/marks/ethereum.png` | Ethereum diamond | Public domain |
 
 The remaining logotypes in `assets/logos/` come from Wikimedia Commons,
 from the projects themselves, or from the institutions themselves.

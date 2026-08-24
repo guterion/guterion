@@ -15,7 +15,7 @@ traps. `tools/Makefile` expects Fil-C at
 
 ```sh
 make -C tools           # build them all
-make -C tools assets    # stamps, then the animation, then the badges
+make -C tools assets    # stamps, the animation, the badges, the QR
 make -C tools pages     # i18n/{en,es,la}/ from README.md
 make -C tools verify    # links, quoted paths, alt text, box widths
 ```
@@ -84,6 +84,20 @@ make -C tools font FONT=~/…/LeagueMono-NarrowBold.ttf
 further, such as a component that carries a scale. `CHARS` at its head
 names the characters it writes; a label outside that set stops the
 badge run.
+
+## Payment codes
+
+`codes.c` draws the QR symbol for each payment address, and `qr.c`
+builds the matrix: it encodes the text in byte mode, adds the
+Reed-Solomon remainder, lays the function patterns, and keeps whichever
+of the eight masks scores lowest under the penalties of ISO/IEC 18004.
+
+The addresses sit in `codes.c` rather than in the page, so a symbol and
+the text below it come from one source. Versions 1 to 5 at the L level
+of correction hold up to 108 bytes, which covers every address here;
+`qr.c` refuses a longer one rather than losing its tail. The three
+symbols take different versions, so `codes.c` widens the quiet zone
+until they share one width and the row sits evenly.
 
 ## Marks
 

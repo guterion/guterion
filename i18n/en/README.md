@@ -134,10 +134,27 @@ Email is the best way to reach me. I answer as soon as I can.
 <td><a href="https://liberapay.com/guterion/">liberapay.com/guterion</a></td>
 </tr>
 <tr>
-<td><b>Monero</b></td>
+<td><img src="../../assets/badges/monero.svg" height="20" alt="Monero"></td>
 <td><code>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</code></td>
 </tr>
+<tr>
+<td><img src="../../assets/badges/lightning.svg" height="20" alt="Bitcoin over Lightning"></td>
+<td><code>guterion@cake.cash</code></td>
+</tr>
+<tr>
+<td><img src="../../assets/badges/ethereum.svg" height="20" alt="Ethereum"></td>
+<td><code>0xe9D6A00754FF22B092A7e9bC1b397517c2281291</code></td>
+</tr>
 </table>
+
+The Ethereum address takes ETH, USDC and USDT on Ethereum itself. A
+token sent over another chain arrives nowhere.
+
+<p align="center">
+<img src="../../assets/qr/monero.png" width="106" alt="Monero address as a QR code">
+<img src="../../assets/qr/lightning.png" width="106" alt="Lightning address as a QR code">
+<img src="../../assets/qr/ethereum.png" width="106" alt="Ethereum address as a QR code">
+</p>
 
 </details>
 
@@ -160,7 +177,9 @@ Email is the best way to reach me. I answer as soon as I can.
 <a href="https://github.com/guterion?tab=followers"><img src="https://img.shields.io/github/followers/guterion?label=Followers&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="GitHub followers"></a>
 <a href="https://github.com/guterion?tab=repositories"><img src="https://img.shields.io/github/stars/guterion?label=Stars&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="GitHub stars"></a>
 <a href="https://github.com/search?q=author%3Aguterion+type%3Aissue&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Aissue&amp;label=Issues&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Issues opened"></a>
-<a href="https://github.com/search?q=author%3Aguterion+type%3Apr&amp;type=pullrequests"><img src="https://img.shields.io/github/issues-search?query=author%3Aguterion+type%3Apr&amp;label=Pull%20requests&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Pull requests opened"></a>
+<a href="https://github.com/search?q=involves%3Aguterion&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=involves%3Aguterion&amp;label=Threads&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Threads taken part in"></a>
+<a href="https://github.com/search?q=commenter%3Aguterion&amp;type=issues"><img src="https://img.shields.io/github/issues-search?query=commenter%3Aguterion&amp;label=Comments&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Threads commented on"></a>
+<a href="https://github.com/guterion"><img src="https://img.shields.io/github/created-at/guterion/guterion?label=Since&amp;color=3a3f4b&amp;style=flat-square" height="20" alt="Account open since"></a>
 </p>
 
 </details>
