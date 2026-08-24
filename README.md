@@ -166,6 +166,8 @@ The Ethereum address takes ETH, USDC and USDT on Ethereum itself too.
 
 </div>
 
+<hr>
+
 </details>
 
 <div align="center">

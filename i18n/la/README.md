@@ -165,6 +165,8 @@ Inscriptio Ethereum quoque accipit ETH, USDC et USDT in ipsa rete Ethereum.
 
 </div>
 
+<hr>
+
 </details>
 
 <div align="center">

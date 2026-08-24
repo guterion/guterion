@@ -166,6 +166,8 @@ La dirección de Ethereum recibe también ETH, USDC y USDT en la propia red Ethe
 
 </div>
 
+<hr>
+
 </details>
 
 <div align="center">
