@@ -132,20 +132,20 @@ El correo es la mejor forma de contactarme. Respondo apenas puedo.
 
 <table>
 <tr>
-<td><a href="https://liberapay.com/guterion/"><img src="../../assets/badges/liberapay.svg" height="20" alt="Liberapay"></a></td>
+<td width="110"><a href="https://liberapay.com/guterion/"><img src="../../assets/badges/liberapay.svg" height="20" alt="Liberapay"></a></td>
 <td><a href="https://liberapay.com/guterion/">liberapay.com/guterion</a></td>
 </tr>
 <tr>
-<td><img src="../../assets/badges/monero.svg" height="20" alt="Monero"></td>
-<td><pre>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</pre></td>
+<td width="110"><img src="../../assets/badges/monero.svg" height="20" alt="Monero"></td>
+<td><sub><code>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</code></sub></td>
 </tr>
 <tr>
-<td><img src="../../assets/badges/lightning.svg" height="20" alt="Bitcoin por Lightning"></td>
-<td><pre>guterion@cake.cash</pre></td>
+<td width="110"><img src="../../assets/badges/lightning.svg" height="20" alt="Bitcoin por Lightning"></td>
+<td><sub><code>guterion@cake.cash</code></sub></td>
 </tr>
 <tr>
-<td><img src="../../assets/badges/ethereum.svg" height="20" alt="Ethereum"></td>
-<td><pre>0xe9D6A00754FF22B092A7e9bC1b397517c2281291</pre></td>
+<td width="110"><img src="../../assets/badges/ethereum.svg" height="20" alt="Ethereum"></td>
+<td><sub><code>0xe9D6A00754FF22B092A7e9bC1b397517c2281291</code></sub></td>
 </tr>
 </table>
 
