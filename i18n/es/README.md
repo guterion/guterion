@@ -131,22 +131,22 @@ El correo es la mejor forma de contactarme. Respondo apenas puedo.
 <div align="center">
 
 <table>
-<tr><td align="center">
-<a href="https://liberapay.com/guterion/"><img src="../../assets/badges/liberapay.svg" height="20" alt="Liberapay"></a><br>
-<a href="https://liberapay.com/guterion/">liberapay.com/guterion</a>
-</td></tr>
-<tr><td align="center">
-<img src="../../assets/badges/monero.svg" height="20" alt="Monero"><br>
-<code>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</code>
-</td></tr>
-<tr><td align="center">
-<img src="../../assets/badges/lightning.svg" height="20" alt="Bitcoin por Lightning"><br>
-<code>guterion@cake.cash</code>
-</td></tr>
-<tr><td align="center">
-<img src="../../assets/badges/ethereum.svg" height="20" alt="Ethereum"><br>
-<code>0xe9D6A00754FF22B092A7e9bC1b397517c2281291</code>
-</td></tr>
+<tr>
+<td><a href="https://liberapay.com/guterion/"><img src="../../assets/badges/liberapay.svg" height="20" alt="Liberapay"></a></td>
+<td><a href="https://liberapay.com/guterion/">liberapay.com/guterion</a></td>
+</tr>
+<tr>
+<td><img src="../../assets/badges/monero.svg" height="20" alt="Monero"></td>
+<td><pre>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</pre></td>
+</tr>
+<tr>
+<td><img src="../../assets/badges/lightning.svg" height="20" alt="Bitcoin por Lightning"></td>
+<td><pre>guterion@cake.cash</pre></td>
+</tr>
+<tr>
+<td><img src="../../assets/badges/ethereum.svg" height="20" alt="Ethereum"></td>
+<td><pre>0xe9D6A00754FF22B092A7e9bC1b397517c2281291</pre></td>
+</tr>
 </table>
 
 La dirección de Ethereum recibe también ETH, USDC y USDT en la propia red Ethereum.
@@ -156,6 +156,11 @@ La dirección de Ethereum recibe también ETH, USDC y USDT en la propia red Ethe
 <td align="center"><img src="../../assets/qr/monero.png" width="180" alt="Dirección de Monero en código QR"></td>
 <td align="center"><img src="../../assets/qr/lightning.png" width="180" alt="Dirección de Lightning en código QR"></td>
 <td align="center"><img src="../../assets/qr/ethereum.png" width="180" alt="Dirección de Ethereum en código QR"></td>
+</tr>
+<tr>
+<td align="center"><b>Monero</b></td>
+<td align="center"><b>Bitcoin</b></td>
+<td align="center"><b>Ethereum</b></td>
 </tr>
 </table>
 
