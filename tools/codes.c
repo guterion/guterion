@@ -8,11 +8,16 @@
  * text below it come from one source and cannot drift apart.
  *
  * Each symbol takes a different version, because the addresses differ
- * in length. What the eye compares across the row is the size of the
- * symbol itself, so each one takes the scale that brings it closest to
- * one width. The canvas around it then differs a little, which reads
- * evenly, where a fixed canvas would leave the short address as a
- * small symbol floating in white.
+ * in length. Two things have to hold at once: the canvas must be one
+ * size, or the page scales each image by a different factor and the
+ * symbols come out uneven again, and the symbols themselves must be
+ * near enough in size that the row reads level.
+ *
+ * So each symbol takes the scale that brings it closest to the target
+ * width, and the margin takes whatever is left over. The margin is
+ * measured in pixels rather than in modules, which lets the canvas
+ * stay fixed; the check below keeps it at the four modules that the
+ * standard asks for.
  */
 
 #include <stdio.h>
@@ -24,7 +29,8 @@
 #include "qr.h"
 
 #define TARGET 148       /* The width each symbol aims for, in pixels. */
-#define QUIET 4          /* Modules of white margin, as the standard asks. */
+#define CANVAS 198       /* One size for every image, margin included. */
+#define QUIET 4          /* The least white margin, counted in modules. */
 
 static const struct {
 	const char *name;
@@ -47,7 +53,7 @@ int main(void)
 		struct qr *q = qr_make(CODES[i].text);
 		struct image *im;
 		char path[128];
-		int scale, side;
+		int scale, side, margin;
 
 		if (!q) {
 			fprintf(stderr, "codes: %s needs a version this "
@@ -59,20 +65,27 @@ int main(void)
 		scale = (TARGET + q->size / 2) / q->size;
 		if (scale < 1)
 			scale = 1;
-		side = (q->size + QUIET * 2) * scale;
+		side = q->size * scale;
+		margin = (CANVAS - side) / 2;
+		if (margin < QUIET * scale) {
+			fprintf(stderr, "codes: %s leaves %d px of margin, "
+					"under the %d that four modules need\n",
+				CODES[i].name, margin, QUIET * scale);
+			return 1;
+		}
 
-		im = img_new(side, side);
+		im = img_new(CANVAS, CANVAS);
 		if (!im)
 			return 1;
-		img_fill(im, 0, 0, side - 1, side - 1, 0xffffff);
+		img_fill(im, 0, 0, CANVAS - 1, CANVAS - 1, 0xffffff);
 		for (int y = 0; y < q->size; y++)
 			for (int x = 0; x < q->size; x++) {
 				int px, py;
 
 				if (!q->m[y * q->size + x])
 					continue;
-				px = (x + QUIET) * scale;
-				py = (y + QUIET) * scale;
+				px = margin + x * scale;
+				py = margin + y * scale;
 				img_fill(im, px, py, px + scale - 1,
 					 py + scale - 1, 0x000000);
 			}
@@ -82,9 +95,8 @@ int main(void)
 			fprintf(stderr, "codes: cannot write %s\n", path);
 			return 1;
 		}
-		printf("  %-12s version %d, symbol %d px, canvas %d px\n",
-		       CODES[i].name, (q->size - 17) / 4,
-		       q->size * scale, side);
+		printf("  %-12s version %d, symbol %d px, margin %d px\n",
+		       CODES[i].name, (q->size - 17) / 4, side, margin);
 		img_free(im);
 		qr_free(q);
 	}

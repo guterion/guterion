@@ -128,39 +128,38 @@ Email is the best way to reach me. I answer as soon as I can.
 
 <br>
 
+<div align="center">
+
 <table>
-<tr>
-<td><a href="https://liberapay.com/guterion/"><img src="assets/badges/liberapay.svg" height="20" alt="Liberapay"></a></td>
-<td><a href="https://liberapay.com/guterion/">liberapay.com/guterion</a></td>
-</tr>
-<tr>
-<td><img src="assets/badges/monero.svg" height="20" alt="Monero"></td>
-<td><code>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</code></td>
-</tr>
-<tr>
-<td><img src="assets/badges/lightning.svg" height="20" alt="Bitcoin over Lightning"></td>
-<td><code>guterion@cake.cash</code></td>
-</tr>
-<tr>
-<td><img src="assets/badges/ethereum.svg" height="20" alt="Ethereum"></td>
-<td><code>0xe9D6A00754FF22B092A7e9bC1b397517c2281291</code></td>
-</tr>
+<tr><td align="center">
+<a href="https://liberapay.com/guterion/"><img src="assets/badges/liberapay.svg" height="20" alt="Liberapay"></a><br>
+<a href="https://liberapay.com/guterion/">liberapay.com/guterion</a>
+</td></tr>
+<tr><td align="center">
+<img src="assets/badges/monero.svg" height="20" alt="Monero"><br>
+<code>48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQYPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL</code>
+</td></tr>
+<tr><td align="center">
+<img src="assets/badges/lightning.svg" height="20" alt="Bitcoin over Lightning"><br>
+<code>guterion@cake.cash</code>
+</td></tr>
+<tr><td align="center">
+<img src="assets/badges/ethereum.svg" height="20" alt="Ethereum"><br>
+<code>0xe9D6A00754FF22B092A7e9bC1b397517c2281291</code>
+</td></tr>
 </table>
 
 The Ethereum address takes ETH, USDC and USDT on Ethereum itself too.
 
 <table>
 <tr>
-<td align="center"><img src="assets/badges/monero.svg" height="20" alt="Monero"></td>
-<td align="center"><img src="assets/badges/lightning.svg" height="20" alt="Bitcoin over Lightning"></td>
-<td align="center"><img src="assets/badges/ethereum.svg" height="20" alt="Ethereum"></td>
-</tr>
-<tr>
-<td align="center"><img src="assets/qr/monero.png" width="148" alt="Monero address as a QR code"></td>
-<td align="center"><img src="assets/qr/lightning.png" width="148" alt="Lightning address as a QR code"></td>
-<td align="center"><img src="assets/qr/ethereum.png" width="148" alt="Ethereum address as a QR code"></td>
+<td align="center"><img src="assets/qr/monero.png" width="180" alt="Monero address as a QR code"></td>
+<td align="center"><img src="assets/qr/lightning.png" width="180" alt="Lightning address as a QR code"></td>
+<td align="center"><img src="assets/qr/ethereum.png" width="180" alt="Ethereum address as a QR code"></td>
 </tr>
 </table>
+
+</div>
 
 </details>
 
