@@ -623,9 +623,9 @@ struct image* png_read(
             memcpy(line, raw + offset + 1, stride);
 
             for (size_t i = 0; i < stride; i++) {
-                int a = i >= (size_t)channels ? line[i - channels] : 0;
+                int a = i >= channels ? line[i - channels] : 0;
                 int b = prev[i];
-                int c = i >= (size_t)channels ? prev[i - channels] : 0;
+                int c = i >= channels ? prev[i - channels] : 0;
 
                 switch (filter) {
                     case 1:
