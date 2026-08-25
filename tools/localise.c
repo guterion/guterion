@@ -24,10 +24,13 @@
 
 static const char* const es[][2] = {
     {"Computer Science and Engineering student at the University of Chile "
-     "(DCC/FCFM).**\n\n*Focused on systems, open source, Unix-like systems, "
+     "(DCC/FCFM).**\n\n*Focused on systems, open source, Unix-like "
+     "systems, "
      "and software engineering.*",
-     "Estudiante de Ingeniería Civil en Computación en la Universidad de Chile "
-     "(DCC/FCFM).**\n\n*Enfocado en sistemas, código abierto, sistemas tipo "
+     "Estudiante de Ingeniería Civil en Computación en la Universidad de "
+     "Chile "
+     "(DCC/FCFM).**\n\n*Enfocado en sistemas, código abierto, sistemas "
+     "tipo "
      "Unix e ingeniería de software.*"},
     {"## About", "## Sobre mí"},
     {"I'm Franco Gutiérrez. I study Computer Science and Engineering at "
@@ -38,25 +41,30 @@ static const char* const es[][2] = {
      "la\n**Universidad de Chile**, en el Departamento de Ciencias de "
      "la\nComputación (**DCC**) de la Facultad de Ciencias Físicas y "
      "Matemáticas\n(**FCFM**)."},
-    {"My main interests are systems, free and open-source software,\nUnix-like "
-     "operating systems, and software engineering. I tend to work\nfrom the "
+    {"My main interests are systems, free and open-source "
+     "software,\nUnix-like "
+     "operating systems, and software engineering. I tend to work\nfrom "
+     "the "
      "shell, primarily with **Neovim**.",
      "Mis principales intereses son los sistemas, el software libre y "
-     "de\ncódigo abierto, los sistemas operativos tipo Unix y la ingeniería "
+     "de\ncódigo abierto, los sistemas operativos tipo Unix y la "
+     "ingeniería "
      "de\nsoftware. Suelo trabajar desde la shell, principalmente con "
      "**Neovim**."},
     {"## Currently", "## Actualmente"},
     {"My studies at the [**University of Chile**](https://uchile.cl/) are "
      "my\nprimary focus, alongside personal software projects and my work "
      "at\n[**Venturas**](https://venturas.cl/).",
-     "Mis estudios en la [**Universidad de Chile**](https://uchile.cl/) son "
+     "Mis estudios en la [**Universidad de Chile**](https://uchile.cl/) "
+     "son "
      "mi\nfoco principal, junto con proyectos personales de software y mi "
      "trabajo\nen [**Venturas**](https://venturas.cl/)."},
     {"## University\n", "## Universidad\n"},
     {"<b>Degree</b></td><td>Computer Science and Engineering<",
      "<b>Carrera</b></td><td>Ingeniería Civil en Computación<"},
     {"<b>Department</b></td><td>Department of Computer Science (DCC)<",
-     "<b>Departamento</b></td><td>Departamento de Ciencias de la Computación "
+     "<b>Departamento</b></td><td>Departamento de Ciencias de la "
+     "Computación "
      "(DCC)<"},
     {"<b>Faculty</b></td><td>Faculty of Physical and Mathematical Sciences "
      "(FCFM)<",
@@ -70,9 +78,12 @@ static const char* const es[][2] = {
     {"<b>Web &amp; markup</b>", "<b>Web y marcado</b>"},
     {"## Projects", "## Proyectos"},
     {"Advanced Gentoo installation documentation for AMD64 musl systems, "
-     "covering\nOpenRC, LUKS2, Btrfs, LLVM/Clang, ThinLTO, and the Zen kernel.",
-     "Documentación avanzada de instalación de Gentoo para sistemas musl en "
-     "AMD64,\nque cubre OpenRC, LUKS2, Btrfs, LLVM/Clang, ThinLTO y el kernel "
+     "covering\nOpenRC, LUKS2, Btrfs, LLVM/Clang, ThinLTO, and the Zen "
+     "kernel.",
+     "Documentación avanzada de instalación de Gentoo para sistemas musl "
+     "en "
+     "AMD64,\nque cubre OpenRC, LUKS2, Btrfs, LLVM/Clang, ThinLTO y el "
+     "kernel "
      "Zen."},
     {"A terminal colour palette on a warm neutral ramp, as Base16 and "
      "Base24\nschemes, in seventeen variants.",
@@ -87,16 +98,19 @@ static const char* const es[][2] = {
      "Donde mantengo mis proyectos comerciales."},
     {"## Contact", "## Contacto"},
     {"stamps/futbol.gif\" width=\"99\" height=\"56\" alt=\"Football\"",
-     "stamps/futbol-es.gif\" width=\"99\" height=\"56\" alt=\"Fútbol\""},
+     "stamps/futbol-es.gif\" width=\"99\" height=\"56\" alt=\"Balompié\""},
     {"stamps/foss.gif\" width=\"99\" height=\"56\" alt=\"Free software\"",
-     "stamps/foss-es.gif\" width=\"99\" height=\"56\" alt=\"Software libre\""},
+     "stamps/foss-es.gif\" width=\"99\" height=\"56\" alt=\"Tecnología "
+     "libre\""},
     {"badges/email.svg\" height=\"20\" alt=\"Email\"",
      "badges/email-es.svg\" height=\"20\" alt=\"Correo\""},
     {"aria-label=\"View ORCID record", "aria-label=\"Ver registro ORCID"},
     {"Email is the best way to reach me. I answer as soon as I can.",
      "El correo es la mejor forma de contactarme. Respondo apenas puedo."},
-    {"The Ethereum address takes ETH, USDC and USDT on Ethereum itself too.",
-     "La dirección de Ethereum recibe también ETH, USDC y USDT en la propia "
+    {"The Ethereum address takes ETH, USDC and USDT on Ethereum itself "
+     "too.",
+     "La dirección de Ethereum recibe también ETH, USDC y USDT en la "
+     "propia "
      "red Ethereum."},
     {"alt=\"Monero address as a QR code\"",
      "alt=\"Dirección de Monero en código QR\""},
@@ -130,8 +144,6 @@ static const char* const es[][2] = {
     {"alt=\"GitHub stars\"", "alt=\"Estrellas en GitHub\""},
     {"alt=\"The shell\"", "alt=\"La shell\""},
     {"alt=\"The C language\"", "alt=\"El lenguaje C\""},
-    {"alt=\"Free software\"", "alt=\"Software libre\""},
-    {"alt=\"Football\"", "alt=\"Fútbol\""},
     {"alt=\"Dragon Ball\"", "alt=\"Dragon Ball\""},
     {"label=VISITORS", "label=VISITAS"},
     {"alt=\"Visitor count\"", "alt=\"Contador de visitas\""},
@@ -251,8 +263,6 @@ static const char* const la[][2] = {
     {"alt=\"GitHub stars\"", "alt=\"Stellae in GitHub\""},
     {"alt=\"The shell\"", "alt=\"Cortex imperatorius\""},
     {"alt=\"The C language\"", "alt=\"Lingua C\""},
-    {"alt=\"Free software\"", "alt=\"Programmatura libera\""},
-    {"alt=\"Football\"", "alt=\"Pediludium\""},
     {"label=VISITORS", "label=HOSPITES"},
     {"alt=\"Visitor count\"", "alt=\"Numerus hospitum\""},
     {"alt=\"Licence: CC BY-SA 4.0 or later\"",
