@@ -100,8 +100,7 @@ static const char* const es[][2] = {
     {"stamps/futbol.gif\" width=\"99\" height=\"56\" alt=\"Football\"",
      "stamps/futbol-es.gif\" width=\"99\" height=\"56\" alt=\"Balompié\""},
     {"stamps/foss.gif\" width=\"99\" height=\"56\" alt=\"Free software\"",
-     "stamps/foss-es.gif\" width=\"99\" height=\"56\" alt=\"Tecnología "
-     "libre\""},
+     "stamps/foss-es.gif\" width=\"99\" height=\"56\" alt=\"Código libre\""},
     {"badges/email.svg\" height=\"20\" alt=\"Email\"",
      "badges/email-es.svg\" height=\"20\" alt=\"Correo\""},
     {"aria-label=\"View ORCID record", "aria-label=\"Ver registro ORCID"},

@@ -234,7 +234,7 @@ static const struct cell wall[ROWS][COLS] = {
         {"clang", {"C"}, {NULL}, "clang.png", {"blue", "violet"}},
         {"neovim", {"NEOVIM"}, {NULL}, "neovim.png", {"lime", "green"}},
         {"foss",
-         {"FREE", "TECNOLOGÍA", "PROGRAMMATA"},
+         {"FREE", "CÓDIGO", "PROGRAMMATA"},
          {"SOFTWARE", "LIBRE", "LIBERA"},
          "fsf.png",
          {"magenta", "red"}},
