@@ -97,6 +97,13 @@ glyphs12[] = {
 	{ 89, { 0x00,0x00,0x88,0x88,0x50,0x50,0x20,0x20,0x20,0x20,0x00,0x00 } },
 	{ 90, { 0x00,0x00,0xF8,0x08,0x10,0x20,0x40,0x80,0x80,0xF8,0x00,0x00 } },
 	{ 183, { 0x00,0x00,0x00,0x00,0x00,0x20,0x20,0x00,0x00,0x00,0x00,0x00 } },
+	{ 193, { 0x10,0x20,0x70,0x88,0x88,0x88,0xF8,0x88,0x88,0x88,0x00,0x00 } },
+	{ 201, { 0x10,0x20,0xF8,0x80,0x80,0xF0,0x80,0x80,0x80,0xF8,0x00,0x00 } },
+	{ 205, { 0x10,0x20,0x70,0x20,0x20,0x20,0x20,0x20,0x20,0x70,0x00,0x00 } },
+	{ 209, { 0x28,0x50,0x88,0x88,0xC8,0xA8,0x98,0x88,0x88,0x88,0x00,0x00 } },
+	{ 211, { 0x10,0x20,0x70,0x88,0x88,0x88,0x88,0x88,0x88,0x70,0x00,0x00 } },
+	{ 218, { 0x10,0x20,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x70,0x00,0x00 } },
+	{ 220, { 0x50,0x50,0x88,0x88,0x88,0x88,0x88,0x88,0x88,0x70,0x00,0x00 } },
 	{ 0, { 0 } }
 };
 
@@ -208,6 +215,47 @@ static const struct cell wall[ROWS][COLS] = {
 static int border_of[ROWS][COLS]; /* index into borders */
 static unsigned int ground_of[ROWS][COLS];
 
+/*
+ * The code point at `i`, with the index moved past it. A caption in
+ * Spanish carries accented capitals, which UTF-8 writes in two bytes,
+ * and the wall measures its captions in letters rather than in bytes.
+ */
+static unsigned int next_cp(
+    const char* s,
+    size_t* i
+)
+{
+    unsigned char c = (unsigned char)s[*i];
+
+    if (c < 0x80) {
+        *i += 1;
+        return c;
+    }
+    if ((c & 0xE0) == 0xC0 && s[*i + 1]) {
+        unsigned int cp = ((unsigned int)(c & 0x1F) << 6)
+            | ((unsigned int)(unsigned char)s[*i + 1] & 0x3F);
+
+        *i += 2;
+        return cp;
+    }
+    *i += 1;
+    return c;
+}
+
+/* How many letters a caption holds. */
+static size_t letters(
+    const char* s
+)
+{
+    size_t i = 0, n = 0;
+
+    while (s[i]) {
+        next_cp(s, &i);
+        n++;
+    }
+    return n;
+}
+
 /* Draw one caption line, centred in the space right of the canton. */
 static void draw_line(
     struct image* im,
@@ -216,15 +264,16 @@ static void draw_line(
     unsigned int rgb
 )
 {
-    size_t len = strlen(text);
+    size_t len = letters(text);
+    size_t i = 0;
 
     /* Terminus leaves a pixel of air beside each glyph; dropping it
        lets a long caption keep clear of the border. */
     int cell = len > 9 ? 5 : CELL;
     int x = CANTON + (W - CANTON - (int)len * cell) / 2;
 
-    for (size_t i = 0; i < len; i++) {
-        unsigned char c = (unsigned char)text[i];
+    while (text[i]) {
+        unsigned int c = next_cp(text, &i);
         const unsigned char* rows = NULL;
 
         for (int g = 0; glyphs12[g].cp; g++) {
