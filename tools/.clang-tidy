@@ -1,0 +1,84 @@
+# tools/.clang-tidy
+# @guterion
+# CC-BY-SA-4.0
+# The clang-tidy checks that report a defect rather than a preference
+#
+# The list starts from nothing and adds back the families that find
+# real faults. `make lint` runs it beside cppcheck, the GCC analyser
+# and the compiler warnings, so a clean run means all four agree.
+#
+# The checks it removes fire on code these generators write on
+# purpose. Four of them ask for a language the platform lacks:
+#
+#   err33-c, insecureAPI     want the C11 Annex K functions, which
+#                            glibc does not carry, and a return value
+#                            from every printf.
+#   reserved-identifier      names _GNU_SOURCE, which glibc asks for.
+#   uppercase-literal-suffix wants 0U where the bit masks read 0u.
+#
+# Five report a conversion that the format itself specifies:
+#
+#   signed-char-misuse       PNG scores a filter byte as signed, and a
+#                            TrueType component argument is an int8.
+#   narrowing-conversions    pixel counts reach a double, which holds
+#                            every integer below 2^53.
+#   implicit-widening        palette and table offsets stay under 256
+#                            by an earlier bound.
+#   incorrect-roundings      the blend of two bytes is never negative,
+#                            so +0.5 and truncation round to nearest.
+#   suspicious-string-compare a qsort comparison returns strcmp as it
+#                            stands.
+#
+# Three report a bound that holds through a chain the analyser drops:
+#
+#   ArrayBound               a scanline holds w * channels bytes and
+#                            the loop reads channels bytes w times;
+#                            the QR remainder takes its length from a
+#                            constant table; the two document readers
+#                            allocate one byte beyond the file.
+#   core.uninitialized       a glyph carries at least one point and a
+#                            symbol at least one codeword, so both
+#                            arrays fill before they are read.
+#   TaintedAlloc             the length comes from a file in this
+#                            repository.
+#
+# Four report a shape rather than a fault:
+#
+#   easily-swappable-params, magic-numbers, math-missing-parentheses,
+#   no-recursion, and the readability checks for braces, cognitive
+#   complexity, identifier length and declaration isolation.
+Checks: >
+  -*,
+  clang-analyzer-*,
+  bugprone-*,
+  cert-*,
+  misc-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-incorrect-roundings,
+  -bugprone-narrowing-conversions,
+  -bugprone-reserved-identifier,
+  -bugprone-signed-char-misuse,
+  -bugprone-suspicious-string-compare,
+  -cert-dcl37-c,
+  -cert-dcl51-cpp,
+  -cert-err33-c,
+  -cert-str34-c,
+  -clang-analyzer-core.uninitialized.Assign,
+  -clang-analyzer-core.uninitialized.Branch,
+  -clang-analyzer-optin.taint.TaintedAlloc,
+  -clang-analyzer-security.ArrayBound,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  -misc-no-recursion,
+  -readability-avoid-nested-conditional-operator,
+  -readability-braces-around-statements,
+  -readability-function-cognitive-complexity,
+  -readability-identifier-length,
+  -readability-isolate-declaration,
+  -readability-magic-numbers,
+  -readability-math-missing-parentheses,
+  -readability-uppercase-literal-suffix
+HeaderFilterRegex: '.*'
