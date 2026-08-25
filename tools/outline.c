@@ -252,9 +252,9 @@ static void walk_simple(size_t g, int contours, int dx, int dy)
 	int v = 0;
 
 	for (int i = 0; i < points; i++) {
-		if (flags[i] & 2)
+		if (flags[i] & 2) {
 			v += (flags[i] & 16) ? (int)u8(o++) : -(int)u8(o++);
-		else if (!(flags[i] & 16)) {
+		} else if (!(flags[i] & 16)) {
 			v += s16(o);
 			o += 2;
 		}
@@ -262,9 +262,9 @@ static void walk_simple(size_t g, int contours, int dx, int dy)
 	}
 	v = 0;
 	for (int i = 0; i < points; i++) {
-		if (flags[i] & 4)
+		if (flags[i] & 4) {
 			v += (flags[i] & 32) ? (int)u8(o++) : -(int)u8(o++);
-		else if (!(flags[i] & 32)) {
+		} else if (!(flags[i] & 32)) {
 			v += s16(o);
 			o += 2;
 		}
