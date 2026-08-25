@@ -156,11 +156,12 @@ format-check:
 	@echo "format clean"
 
 # --- ANALYSIS ---------------------------------------------------------
-# Four readers look at the same sources, and each one sees what the
+# Five readers look at the same sources, and each one sees what the
 # others miss. The compiler catches the shape of a statement, the GCC
 # analyser walks the paths through a function, clang-tidy holds the
-# checks that `.clang-tidy` selects, and cppcheck reads the whole set
-# at once, which is what lets it name a function that nobody calls.
+# checks that `.clang-tidy` selects, cppcheck reads the whole set at
+# once, which is what lets it name a function that nobody calls, and
+# include-what-you-use asks why each #include is there.
 #
 # These use the system toolchain rather than Fil-C, because they read
 # the sources and build nothing. Fil-C answers a different question:
@@ -217,7 +218,15 @@ lint: format-check
 	@cppcheck --enable=warning,style,performance,portability,unusedFunction \
 		--inconclusive --std=c17 --language=c -I. --quiet \
 		--error-exitcode=1 $(CPPCHECK_SUPPRESS) .
-	@echo "== all four clean =="
+	@echo "== include-what-you-use =="
+	@out=$$(for f in $(SOURCES) $(HEADERS); do \
+		include-what-you-use -Xiwyu --no_fwd_decls -std=c17 -I. \
+			-x c "$$f" 2>&1 \
+			| sed -n '/should add these lines/,/^---/p' \
+			| grep -E '^[+-]#include|^- #include' || true; \
+	done); \
+	if [ -n "$$out" ]; then echo "$$out"; exit 1; fi
+	@echo "== all five clean =="
 
 clean:
 	rm -f $(PROGRAMS)

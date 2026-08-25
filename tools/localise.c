@@ -17,7 +17,6 @@
 /* strdup comes from the GNU extensions, not from C itself. */
 #define _GNU_SOURCE
 
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
