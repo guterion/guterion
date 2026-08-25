@@ -154,8 +154,8 @@ static unsigned char *slurp(const char *path, size_t *len)
 	size = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	if (size < 0) {              /* The file gave no length. */
-		fclose(f);
-		return NULL;
+		fprintf(stderr, "cannot measure %s\n", path);
+		exit(1);
 	}
 	buf = malloc((size_t)size);
 	if (!buf || fread(buf, 1, (size_t)size, f) != (size_t)size) {

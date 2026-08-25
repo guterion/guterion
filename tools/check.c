@@ -31,6 +31,7 @@
 static char problems[MAX_PROBLEMS][MAX_PATH];
 static int problem_count;
 
+__attribute__((format(printf, 1, 2)))
 static void report(const char *fmt, ...)
 {
 	va_list args;
@@ -117,7 +118,7 @@ static void check_boxes(const char *doc, const char *text)
 	int first_width = -1;
 
 	while (line && *line) {
-		char *end = strchr(line, '\n');
+		const char *end = strchr(line, '\n');
 		size_t len = end ? (size_t)(end - line) : strlen(line);
 
 		line_no++;
@@ -148,6 +149,7 @@ static int target_exists(const char *doc, const char *target)
 	char dir[MAX_PATH];
 	struct stat st;
 	char *slash;
+	int n;
 
 	snprintf(dir, sizeof dir, "%s", doc);
 	slash = strrchr(dir, '/');
@@ -157,9 +159,14 @@ static int target_exists(const char *doc, const char *target)
 		dir[0] = '\0';
 
 	if (dir[0])
-		snprintf(path, sizeof path, "%s/%s", dir, target);
+		n = snprintf(path, sizeof path, "%s/%s", dir, target);
 	else
-		snprintf(path, sizeof path, "%s", target);
+		n = snprintf(path, sizeof path, "%s", target);
+	if (n < 0 || (size_t)n >= sizeof path) {
+		report("%s: the path to %s needs more than %d bytes",
+		       doc, target, MAX_PATH);
+		return 0;
+	}
 
 	return stat(path, &st) == 0;
 }

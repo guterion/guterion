@@ -471,6 +471,18 @@ struct image *png_read(const char *path)
 		fprintf(stderr, "png_read: %s needs 8-bit samples\n", path);
 		goto done;
 	}
+	/*
+	 * The five colour types the format defines. The reader takes
+	 * the number of channels from this value and reads that many
+	 * bytes for each pixel, so a type it does not know would read
+	 * past the end of the line.
+	 */
+	if (colour != 0 && colour != 2 && colour != 3 &&
+	    colour != 4 && colour != 6) {
+		fprintf(stderr, "png_read: %s holds colour type %d\n",
+			path, colour);
+		goto done;
+	}
 	channels = colour == 0 ? 1 : colour == 2 ? 3
 		 : colour == 3 ? 1 : colour == 4 ? 2 : 4;
 

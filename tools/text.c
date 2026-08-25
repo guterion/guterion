@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "img.h"
 #include "text.h"
 #include "leaguemono.h"
 
@@ -59,6 +60,7 @@ double text_advance(const char *s, double size)
  * Append to the buffer and report the length the whole path needs. The
  * caller compares that length against the buffer it gave.
  */
+__attribute__((format(printf, 4, 5)))
 static void put(char *buf, size_t n, size_t *len, const char *fmt, ...)
 {
 	va_list ap;
@@ -107,6 +109,11 @@ size_t text_path(char *buf, size_t n, const char *s)
 				case 'Z':
 					put(buf, n, &len, "Z");
 					break;
+				default:
+					fprintf(stderr,
+						"text: stroke '%c' is unknown\n",
+						k->op);
+					exit(1);
 				}
 			}
 		pen += GLYPH_ADVANCE;
@@ -211,6 +218,10 @@ static int build_edges(struct edge_list *l, const char *s,
 				cur_x = start_x;
 				cur_y = start_y;
 				break;
+			default:
+				fprintf(stderr, "text: stroke '%c' is unknown\n",
+					k->op);
+				exit(1);
 			}
 		}
 		pen += GLYPH_ADVANCE * scale;
