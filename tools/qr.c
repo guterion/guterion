@@ -32,7 +32,7 @@ static const struct
     int data;
     int ecc;
     int align; /* Centre of the one alignment pattern, or 0. */
-} VERSIONS[] = {
+} versions[] = {
     {0, 0, 0}, /* Index 0 goes unused. */
     {19, 7, 0},
     {34, 10, 18},
@@ -205,8 +205,8 @@ static void place_function_patterns(
         set_module(g, 6, i, !(i % 2));
     }
 
-    if (VERSIONS[version].align) {
-        place_alignment(g, VERSIONS[version].align, VERSIONS[version].align);
+    if (versions[version].align) {
+        place_alignment(g, versions[version].align, versions[version].align);
     }
 
     /* The module that is always dark. */
@@ -461,7 +461,7 @@ struct qr* qr_make(
 
     for (int v = 1; v <= MAX_VERSION; v++) {
         /* Four bits of mode, eight of length, then the text. */
-        if ((int)len + 2 <= VERSIONS[v].data) {
+        if ((int)len + 2 <= versions[v].data) {
             version = v;
             break;
         }
@@ -471,7 +471,7 @@ struct qr* qr_make(
     }
 
     {
-        int total = VERSIONS[version].data;
+        int total = versions[version].data;
         int n = 0;
         unsigned int acc = 0;
         int acc_bits = 0;
@@ -502,11 +502,11 @@ struct qr* qr_make(
             codewords[n++] = pad % 2 ? 0x11 : 0xEC;
         }
 
-        rs_encode(codewords, total, VERSIONS[version].ecc, codewords + total);
+        rs_encode(codewords, total, versions[version].ecc, codewords + total);
     }
 
     {
-        int total = VERSIONS[version].data + VERSIONS[version].ecc;
+        int total = versions[version].data + versions[version].ecc;
 
         for (int i = 0; i < total; i++) {
             for (int b = 7; b >= 0; b--) {

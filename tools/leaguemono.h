@@ -41,7 +41,7 @@ struct glyph {
 	unsigned short count;   /* How many strokes the glyph holds. */
 };
 
-static const struct stroke STROKES[] = {
+static const struct stroke strokes[] = {
 	{ 'M',   737,     0,     0,     0 },
 	{ 'L',   693,   304,     0,     0 },
 	{ 'L',   426,   304,     0,     0 },
@@ -928,7 +928,7 @@ static const struct stroke STROKES[] = {
 	{ 'Z',     0,     0,     0,     0 },
 };
 
-static const struct glyph GLYPHS[] = {
+static const struct glyph glyphs[] = {
 	{  32,     0,    0 },   /* space */
 	{  65,     0,   14 },   /* A */
 	{  66,    14,   35 },   /* B */

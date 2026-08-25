@@ -38,9 +38,9 @@ static const struct glyph* find_glyph(
     unsigned char c
 )
 {
-    for (int i = 0; GLYPHS[i].cp; i++) {
-        if (GLYPHS[i].cp == c) {
-            return &GLYPHS[i];
+    for (int i = 0; glyphs[i].cp; i++) {
+        if (glyphs[i].cp == c) {
+            return &glyphs[i];
         }
     }
     return NULL;
@@ -115,7 +115,7 @@ size_t text_path(
 
         if (g) {
             for (int i = 0; i < g->count; i++) {
-                const struct stroke* k = &STROKES[g->first + i];
+                const struct stroke* k = &strokes[g->first + i];
 
                 switch (k->op) {
                     case 'M':
@@ -229,7 +229,7 @@ static int build_edges(
             continue;
         }
         for (int i = 0; i < g->count; i++) {
-            const struct stroke* k = &STROKES[g->first + i];
+            const struct stroke* k = &strokes[g->first + i];
             double ax = pen + k->a * scale;
             double ay = y - k->b * scale;
             double cx = pen + k->c * scale;

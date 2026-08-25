@@ -59,7 +59,7 @@ struct badge
  * The badge names the service; the value sits beside it, in text a
  * reader can select and copy.
  */
-static const struct badge SET[] = {
+static const struct badge set[] = {
     {"email", "EMAIL", "#2f6f3a", "email", 44.0 / 30.0, "#ffffff", NULL, NULL},
     {"gpg", "GPG", "#3a3f4b", "gpg", 40.0 / 44.0, "#ffffff", NULL, NULL},
     {"git", "GIT", "#662900", "forgejo", 1.0, "#ffffff", NULL, NULL},
@@ -176,7 +176,7 @@ static int badge_width(
 }
 
 static const char
-    B64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    b64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 /* Encode a buffer as base64. The caller owns the result. */
 static char* base64(
@@ -202,10 +202,10 @@ static char* base64(
             block |= data[i + 2];
         }
 
-        out[o++] = B64[(block >> 18) & 0x3F];
-        out[o++] = B64[(block >> 12) & 0x3F];
-        out[o++] = left > 1 ? B64[(block >> 6) & 0x3F] : '=';
-        out[o++] = left > 2 ? B64[block & 0x3F] : '=';
+        out[o++] = b64[(block >> 18) & 0x3F];
+        out[o++] = b64[(block >> 12) & 0x3F];
+        out[o++] = left > 1 ? b64[(block >> 6) & 0x3F] : '=';
+        out[o++] = left > 2 ? b64[block & 0x3F] : '=';
     }
     out[o] = '\0';
     return out;
@@ -506,8 +506,8 @@ int main(
     mkdir("assets/badges", 0755);
 
     /* One width for the whole set: the widest badge sets them all. */
-    for (int i = 0; SET[i].name; i++) {
-        int w = badge_width(&SET[i]);
+    for (int i = 0; set[i].name; i++) {
+        int w = badge_width(&set[i]);
 
         if (w > width) {
             width = w;
@@ -515,8 +515,8 @@ int main(
     }
     printf("  one width for all: %dpx\n", width);
 
-    for (int i = 0; SET[i].name; i++) {
-        write_badge(&SET[i], width);
+    for (int i = 0; set[i].name; i++) {
+        write_badge(&set[i], width);
     }
 
     return 0;

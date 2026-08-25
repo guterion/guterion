@@ -23,7 +23,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-static const char* const ES[][2] = {
+static const char* const es[][2] = {
     {"Computer Science and Engineering student at the University of Chile "
      "(DCC/FCFM).**\n\n*Focused on systems, open source, Unix-like systems, "
      "and software engineering.*",
@@ -137,7 +137,7 @@ static const char* const ES[][2] = {
     {NULL, NULL}
 };
 
-static const char* const LA[][2] = {
+static const char* const la[][2] = {
     {"Computer Science and Engineering student at the University of Chile "
      "(DCC/FCFM).**\n\n*Focused on systems, open source, Unix-like "
      "systems, and software engineering.*",
@@ -252,7 +252,7 @@ static const char* const LA[][2] = {
     {NULL, NULL}
 };
 
-static const char* const SELECTOR[3] = {
+static const char* const selectors[3] = {
     "<img src=\"../../assets/flags/spqr.svg\" alt=\"\" height=\"18\" "
     "align=\"texttop\"> **[Latine](../la/README.md)** · <img "
     "src=\"../../assets/flags/burgundy.svg\" alt=\"\" height=\"18\" "
@@ -495,9 +495,9 @@ int main(
 {
     char* readme = slurp("README.md");
 
-    build("en", readme, SELECTOR[0], NULL);
-    build("es", readme, SELECTOR[1], ES);
-    build("la", readme, SELECTOR[2], LA);
+    build("en", readme, selectors[0], NULL);
+    build("es", readme, selectors[1], es);
+    build("la", readme, selectors[2], la);
     free(readme);
     return 0;
 }

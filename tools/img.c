@@ -224,19 +224,19 @@ static int huff_decode(
 
 /* The length and distance codes of RFC 1951, read by the inflate
    above and written by the deflate below. */
-static const unsigned short LEN_BASE[] = {3, 4, 5, 6, 7, 8, 9, 10,
+static const unsigned short len_base[] = {3, 4, 5, 6, 7, 8, 9, 10,
                                           11, 13, 15, 17, 19, 23, 27, 31,
                                           35, 43, 51, 59, 67, 83, 99, 115,
                                           131, 163, 195, 227, 258};
-static const unsigned char LEN_EXTRA[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+static const unsigned char len_extra[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
                                           1, 1, 2, 2, 2, 2, 3, 3, 3, 3,
                                           4, 4, 4, 4, 5, 5, 5, 5, 0};
-static const unsigned short DIST_BASE[] = {
+static const unsigned short dist_base[] = {
     1, 2, 3, 4, 5, 7, 9, 13, 17, 25,
     33, 49, 65, 97, 129, 193, 257, 385, 513, 769,
     1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577
 };
-static const unsigned char DIST_EXTRA[] = {0, 0, 0, 0, 1, 1, 2, 2,
+static const unsigned char dist_extra[] = {0, 0, 0, 0, 1, 1, 2, 2,
                                            3, 3, 4, 4, 5, 5, 6, 6,
                                            7, 7, 8, 8, 9, 9, 10, 10,
                                            11, 11, 12, 12, 13, 13};
@@ -336,7 +336,7 @@ static unsigned char* inflate_zlib(
             use_lit = &fixed_lit;
             use_dist = &fixed_dist;
         } else if (type == 2) {
-            static const unsigned char ORDER[] = {
+            static const unsigned char order[] = {
                 16,
                 17,
                 18,
@@ -373,7 +373,7 @@ static unsigned char* inflate_zlib(
                 if (v < 0) {
                     goto fail;
                 }
-                code_lengths[ORDER[i]] = (unsigned char)v;
+                code_lengths[order[i]] = (unsigned char)v;
             }
             huff_build(&code_huff, code_lengths, 19);
 
@@ -432,15 +432,15 @@ static unsigned char* inflate_zlib(
                 goto fail;
             }
             {
-                int length = LEN_BASE[sym] + bits_get(&bs, LEN_EXTRA[sym]);
+                int length = len_base[sym] + bits_get(&bs, len_extra[sym]);
                 int dsym = huff_decode(&bs, use_dist);
                 size_t distance;
 
                 if (dsym < 0 || dsym >= 30) {
                     goto fail;
                 }
-                distance = (size_t)DIST_BASE[dsym]
-                    + (size_t)bits_get(&bs, DIST_EXTRA[dsym]);
+                distance = (size_t)dist_base[dsym]
+                    + (size_t)bits_get(&bs, dist_extra[dsym]);
                 if (distance > out.len) {
                     goto fail;
                 }
@@ -937,23 +937,23 @@ static unsigned char* deflate_fixed(
         if (best_len >= MIN_MATCH) {
             int lc = 0, dc = 0;
 
-            while (lc < 28 && LEN_BASE[lc + 1] <= best_len) {
+            while (lc < 28 && len_base[lc + 1] <= best_len) {
                 lc++;
             }
-            while (dc < 29 && DIST_BASE[dc + 1] <= best_dist) {
+            while (dc < 29 && dist_base[dc + 1] <= best_dist) {
                 dc++;
             }
             if (put_literal(&b, (unsigned int)(257 + lc))
                 || put_bits(
                     &b,
-                    (unsigned int)(best_len - LEN_BASE[lc]),
-                    LEN_EXTRA[lc]
+                    (unsigned int)(best_len - len_base[lc]),
+                    len_extra[lc]
                 )
                 || put_code(&b, (unsigned int)dc, 5)
                 || put_bits(
                     &b,
-                    (unsigned int)(best_dist - DIST_BASE[dc]),
-                    DIST_EXTRA[dc]
+                    (unsigned int)(best_dist - dist_base[dc]),
+                    dist_extra[dc]
                 )) {
                 goto fail;
             }

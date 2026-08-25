@@ -34,7 +34,7 @@ static const struct
 {
     const char* name;
     const char* text;
-} CODES[] = {
+} codes[] = {
     {"monero",
      "48okbGH4M5HNhaSEyVTYqAQu8cLK6D9PmAWKRwCeyYx9RsFcbpjhnP5WaYoQ"
      "YPwPNWS49xwqHsPrfP8U5zKmFoUYTrF6NNL"},
@@ -50,8 +50,8 @@ int main(
     mkdir("assets", 0755);
     mkdir("assets/qr", 0755);
 
-    for (int i = 0; CODES[i].name; i++) {
-        struct qr* q = qr_make(CODES[i].text);
+    for (int i = 0; codes[i].name; i++) {
+        struct qr* q = qr_make(codes[i].text);
         struct image* im;
         char path[128];
         int scale, side, margin;
@@ -61,7 +61,7 @@ int main(
                 stderr,
                 "codes: %s needs a version this "
                 "encoder does not write\n",
-                CODES[i].name
+                codes[i].name
             );
             return 1;
         }
@@ -77,7 +77,7 @@ int main(
                 stderr,
                 "codes: %s leaves %d px of margin, "
                 "under the %d that four modules need\n",
-                CODES[i].name,
+                codes[i].name,
                 margin,
                 QUIET * scale
             );
@@ -102,14 +102,14 @@ int main(
             }
         }
 
-        snprintf(path, sizeof path, "assets/qr/%s.png", CODES[i].name);
+        snprintf(path, sizeof path, "assets/qr/%s.png", codes[i].name);
         if (png_write(path, im)) {
             fprintf(stderr, "codes: cannot write %s\n", path);
             return 1;
         }
         printf(
             "  %-12s version %d, symbol %d px, margin %d px\n",
-            CODES[i].name,
+            codes[i].name,
             (q->size - 17) / 4,
             side,
             margin

@@ -13,7 +13,7 @@
  * The canton ground comes from the logotype itself: theprogram averages the
  * mark's own colour and darkens it to a ground, so a stamp is
  * recognisable from across the page. A mark that is pale or monochrome
- * averages to grey, so those stamps name their ground by hand in FIXED.
+ * averages to grey, so those stamps name their ground by hand in fixed.
  *
  * The wall is a three by seven grid, and two stamps that touch —
  * including on the diagonal — take different border colours and
@@ -50,7 +50,7 @@
 
 /* clang-format off */
 static const struct { unsigned int cp; unsigned char rows[12]; }
-GLYPHS12[] = {
+glyphs12[] = {
 	{ 32, { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } },
 	{ 33, { 0x00,0x00,0x20,0x20,0x20,0x20,0x20,0x00,0x20,0x20,0x00,0x00 } },
 	{ 40, { 0x00,0x00,0x10,0x20,0x40,0x40,0x40,0x40,0x20,0x10,0x00,0x00 } },
@@ -111,7 +111,7 @@ static const struct
 {
     const char* name;
     unsigned int rgb;
-} BORDERS[] = {
+} borders[] = {
     {"red", 0xFF4C49},
     {"orange", 0xE7A739},
     {"yellow", 0xC98A04},
@@ -128,14 +128,14 @@ static const struct
 {
     const char* stamp;
     const char* colour;
-} PINNED[] = {{"laroja", "red"}, {NULL, NULL}};
+} pinned[] = {{"laroja", "red"}, {NULL, NULL}};
 
 /* Grounds named by hand, for marks whose own colour says the wrong thing. */
 static const struct
 {
     const char* stamp;
     unsigned int rgb;
-} FIXED[] = {
+} fixed[] = {
     {"chile", 0x4a0a12},    /* The star is white; take the flag's red. */
     {"laroja", 0x6b0f18},   /* The team is called the red one. */
     {"latine", 0x3b1030},   /* Tyrian purple, for the eagle. */
@@ -163,7 +163,7 @@ struct cell
 #define ROWS 3
 #define COLS 7
 
-static const struct cell WALL[ROWS][COLS] = {
+static const struct cell wall[ROWS][COLS] = {
     {
         {"instituto-nacional",
          "INSTITUTO",
@@ -205,7 +205,7 @@ static const struct cell WALL[ROWS][COLS] = {
     }
 };
 
-static int border_of[ROWS][COLS]; /* index into BORDERS */
+static int border_of[ROWS][COLS]; /* index into borders */
 static unsigned int ground_of[ROWS][COLS];
 
 /* Draw one caption line, centred in the space right of the canton. */
@@ -227,9 +227,9 @@ static void draw_line(
         unsigned char c = (unsigned char)text[i];
         const unsigned char* rows = NULL;
 
-        for (int g = 0; GLYPHS12[g].cp; g++) {
-            if (GLYPHS12[g].cp == c) {
-                rows = GLYPHS12[g].rows;
+        for (int g = 0; glyphs12[g].cp; g++) {
+            if (glyphs12[g].cp == c) {
+                rows = glyphs12[g].rows;
                 break;
             }
         }
@@ -255,9 +255,9 @@ static unsigned int ground_for(
     double sum[3] = {0, 0, 0};
     long n = 0;
 
-    for (int i = 0; FIXED[i].stamp; i++) {
-        if (!strcmp(FIXED[i].stamp, name)) {
-            return FIXED[i].rgb;
+    for (int i = 0; fixed[i].stamp; i++) {
+        if (!strcmp(fixed[i].stamp, name)) {
+            return fixed[i].rgb;
         }
     }
 
@@ -397,8 +397,8 @@ static int is_fixed(
     const char* name
 )
 {
-    for (int i = 0; FIXED[i].stamp; i++) {
-        if (!strcmp(FIXED[i].stamp, name)) {
+    for (int i = 0; fixed[i].stamp; i++) {
+        if (!strcmp(fixed[i].stamp, name)) {
             return 1;
         }
     }
@@ -409,8 +409,8 @@ static int border_index(
     const char* name
 )
 {
-    for (int i = 0; BORDERS[i].name; i++) {
-        if (!strcmp(BORDERS[i].name, name)) {
+    for (int i = 0; borders[i].name; i++) {
+        if (!strcmp(borders[i].name, name)) {
             return i;
         }
     }
@@ -430,9 +430,9 @@ static void solve_borders(
 
     for (int r = 0; r < ROWS; r++) {
         for (int c = 0; c < COLS; c++) {
-            for (int i = 0; PINNED[i].stamp; i++) {
-                if (!strcmp(PINNED[i].stamp, WALL[r][c].name)) {
-                    border_of[r][c] = border_index(PINNED[i].colour);
+            for (int i = 0; pinned[i].stamp; i++) {
+                if (!strcmp(pinned[i].stamp, wall[r][c].name)) {
+                    border_of[r][c] = border_index(pinned[i].colour);
                 }
             }
         }
@@ -459,19 +459,19 @@ static void solve_borders(
                 }
             }
             for (int w = 0; w < 2 && border_of[r][c] < 0; w++) {
-                int idx = border_index(WALL[r][c].want[w]);
+                int idx = border_index(wall[r][c].want[w]);
 
                 if (idx >= 0 && !taken[idx]) {
                     border_of[r][c] = idx;
                 }
             }
-            for (int i = 0; BORDERS[i].name && border_of[r][c] < 0; i++) {
+            for (int i = 0; borders[i].name && border_of[r][c] < 0; i++) {
                 if (!taken[i]) {
                     border_of[r][c] = i;
                 }
             }
             if (border_of[r][c] < 0) {
-                fprintf(stderr, "no colour left for %s\n", WALL[r][c].name);
+                fprintf(stderr, "no colour left for %s\n", wall[r][c].name);
                 exit(1);
             }
         }
@@ -487,7 +487,7 @@ static void separate_grounds(
 
     for (int r = 0; r < ROWS; r++) {
         for (int c = 0; c < COLS; c++) {
-            if (is_fixed(WALL[r][c].name)) {
+            if (is_fixed(wall[r][c].name)) {
                 continue;
             }
             for (int turn = 1; turn < 8; turn++) {
@@ -547,8 +547,8 @@ static void check(
                         fprintf(
                             stderr,
                             "border clash: %s touches %s\n",
-                            WALL[r][c].name,
-                            WALL[nr][nc].name
+                            wall[r][c].name,
+                            wall[nr][nc].name
                         );
                         exit(1);
                     }
@@ -574,7 +574,7 @@ static void check(
     }
     if (left) {
         printf(
-            "  grounds: %d pairs still sit close; name one in FIXED\n",
+            "  grounds: %d pairs still sit close; name one in fixed\n",
             left / 2
         );
     } else {
@@ -646,13 +646,13 @@ int main(
             char path[256];
             struct image* mark;
 
-            snprintf(path, sizeof path, "assets/logos/%s", WALL[r][c].logo);
+            snprintf(path, sizeof path, "assets/logos/%s", wall[r][c].logo);
             mark = png_read(path);
             if (!mark) {
                 fprintf(stderr, "cannot read %s\n", path);
                 return 1;
             }
-            ground_of[r][c] = ground_for(WALL[r][c].name, mark);
+            ground_of[r][c] = ground_for(wall[r][c].name, mark);
             img_free(mark);
         }
     }
@@ -663,8 +663,8 @@ int main(
     for (int r = 0; r < ROWS; r++) {
         for (int c = 0; c < COLS; c++) {
             write_stamp(
-                &WALL[r][c],
-                BORDERS[border_of[r][c]].rgb,
+                &wall[r][c],
+                borders[border_of[r][c]].rgb,
                 ground_of[r][c]
             );
         }
@@ -676,8 +676,8 @@ int main(
         for (int c = 0; c < COLS; c++) {
             printf(
                 " %9.9s %-4.4s#%06x",
-                WALL[r][c].name,
-                BORDERS[border_of[r][c]].name,
+                wall[r][c].name,
+                borders[border_of[r][c]].name,
                 ground_of[r][c]
             );
         }
