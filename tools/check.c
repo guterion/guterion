@@ -85,7 +85,7 @@ static int cell_width(
         if (i + (size_t)bytes > len) {
             break;
         }
-        for (int k = 1; k < bytes; k++) {
+        for (size_t k = 1; k < (size_t)bytes; k++) {
             cp = (cp << 6) | ((unsigned char)s[i + k] & 0x3F);
         }
         i += (size_t)bytes;

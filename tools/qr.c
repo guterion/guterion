@@ -540,7 +540,7 @@ struct qr* qr_make(
             return NULL;
         }
         q->size = n;
-        q->m = malloc((size_t)n * n);
+        q->m = malloc((size_t)n * (size_t)n);
         if (!q->m) {
             free(q);
             return NULL;

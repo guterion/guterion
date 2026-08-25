@@ -72,7 +72,7 @@ void img_fill(
             if (x < 0 || x >= im->w) {
                 continue;
             }
-            p = im->px + ((size_t)y * im->w + x) * 4;
+            p = im->px + img_offset(im->w, x, y);
             p[0] = (rgb >> 16) & 0xFF;
             p[1] = (rgb >> 8) & 0xFF;
             p[2] = rgb & 0xFF;
@@ -118,8 +118,8 @@ void img_over(
             if (dx < 0 || dx >= dst->w) {
                 continue;
             }
-            s = top->px + ((size_t)j * top->w + i) * 4;
-            d = dst->px + ((size_t)dy * dst->w + dx) * 4;
+            s = top->px + img_offset(top->w, i, j);
+            d = dst->px + img_offset(dst->w, dx, dy);
             a = s[3];
             if (!a) {
                 continue;
@@ -496,7 +496,8 @@ struct image* png_read(
     unsigned char trns[256];
     struct image* im = NULL;
     size_t size, idat_len = 0, raw_len = 0, pos = 8;
-    int w = 0, h = 0, depth = 0, colour = 0, channels = 0;
+    int w = 0, h = 0, depth = 0, colour = 0;
+    size_t channels = 0;
     int trns_count = 0;
 
     if (!f) {
@@ -582,11 +583,11 @@ struct image* png_read(
         fprintf(stderr, "png_read: %s holds colour type %d\n", path, colour);
         goto done;
     }
-    channels = colour == 0   ? 1
-               : colour == 2 ? 3
-               : colour == 3 ? 1
-               : colour == 4 ? 2
-                             : 4;
+    channels = colour == 0   ? 1U
+               : colour == 2 ? 3U
+               : colour == 3 ? 1U
+               : colour == 4 ? 2U
+                             : 4U;
 
     raw = inflate_zlib(idat, idat_len, &raw_len);
     if (!raw) {
@@ -645,7 +646,7 @@ struct image* png_read(
             }
 
             for (int x = 0; x < w; x++) {
-                unsigned char* p = im->px + ((size_t)y * w + x) * 4;
+                unsigned char* p = im->px + img_offset(w, x, y);
                 const unsigned char* s = line + (size_t)x * channels;
 
                 switch (colour) {
@@ -905,7 +906,9 @@ static unsigned char* deflate_fixed(
             int cand = head[h];
 
             for (int chain = 0; cand >= 0 && chain < MAX_CHAIN; chain++) {
-                size_t dist = i - (size_t)cand;
+                /* The chain ends with -1, which is why it is int. */
+                size_t at = (size_t)cand;
+                size_t dist = i - at;
                 size_t len = 0;
                 size_t limit = n - i;
 
@@ -915,7 +918,7 @@ static unsigned char* deflate_fixed(
                 if (limit > MAX_MATCH) {
                     limit = MAX_MATCH;
                 }
-                while (len < limit && src[cand + len] == src[i + len]) {
+                while (len < limit && src[at + len] == src[i + len]) {
                     len++;
                 }
                 if (len > best_len) {
@@ -1013,7 +1016,7 @@ static int choose_filter(
     const unsigned char* row,
     const unsigned char* up,
     size_t width_bytes,
-    int bpp,
+    size_t bpp,
     unsigned char* out
 )
 {
@@ -1024,9 +1027,9 @@ static int choose_filter(
         long score = 0;
 
         for (size_t i = 0; i < width_bytes; i++) {
-            int a = i >= (size_t)bpp ? row[i - bpp] : 0;
+            int a = i >= bpp ? row[i - bpp] : 0;
             int b = up ? up[i] : 0;
-            int c = (up && i >= (size_t)bpp) ? up[i - bpp] : 0;
+            int c = (up && i >= bpp) ? up[i - bpp] : 0;
             int v;
 
             switch (f) {
@@ -1068,9 +1071,9 @@ static int choose_filter(
 
     /* Apply the winner. */
     for (size_t i = 0; i < width_bytes; i++) {
-        int a = i >= (size_t)bpp ? row[i - bpp] : 0;
+        int a = i >= bpp ? row[i - bpp] : 0;
         int b = up ? up[i] : 0;
-        int c = (up && i >= (size_t)bpp) ? up[i - bpp] : 0;
+        int c = (up && i >= bpp) ? up[i - bpp] : 0;
 
         switch (best) {
             case 0:
@@ -1220,7 +1223,7 @@ struct image* img_scale(
                     );
                     double k = wx * wy;
                     const unsigned char* p = src->px
-                        + ((size_t)cj * src->w + ci) * 4;
+                        + img_offset(src->w, ci, cj);
                     double alpha = p[3] / 255.0;
 
                     /* Weight colour by alpha, so a
@@ -1233,7 +1236,7 @@ struct image* img_scale(
                 }
             }
             {
-                unsigned char* d = out->px + ((size_t)y * w + x) * 4;
+                unsigned char* d = out->px + img_offset(w, x, y);
                 double alpha = weight != 0.0 ? sum[3] / weight : 0.0;
 
                 if (alpha < 0.0) {
@@ -1352,7 +1355,7 @@ static struct swatch* histogram(
     int* out_n
 )
 {
-    size_t total = (size_t)count * w * h;
+    size_t total = (size_t)count * (size_t)w * (size_t)h;
     size_t cap = 1024;
     int* slot;
     struct swatch* sw;
@@ -1373,7 +1376,7 @@ static struct swatch* histogram(
     }
 
     for (int f = 0; f < count; f++) {
-        for (size_t i = 0; i < (size_t)w * h; i++) {
+        for (size_t i = 0; i < (size_t)w * (size_t)h; i++) {
             const unsigned char* p = frames[f]->px + i * 4;
             unsigned int key = ((unsigned int)p[0] << 16)
                 | ((unsigned int)p[1] << 8) | p[2];
@@ -1685,14 +1688,14 @@ int gif_write(
     fputc(0, f);
     fputc(0, f);
 
-    indices = malloc((size_t)w * h);
+    indices = malloc((size_t)w * (size_t)h);
     if (!indices) {
         fclose(f);
         return -1;
     }
 
     for (int n = 0; n < count; n++) {
-        size_t pixels = (size_t)w * h;
+        size_t pixels = (size_t)w * (size_t)h;
 
         fputc(0x21, f); /* graphic control extension */
         fputc(0xF9, f);

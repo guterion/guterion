@@ -263,7 +263,7 @@ static unsigned int ground_for(
 
     for (int y = 0; y < mark->h; y++) {
         for (int x = 0; x < mark->w; x++) {
-            const unsigned char* p = mark->px + ((size_t)y * mark->w + x) * 4;
+            const unsigned char* p = mark->px + img_offset(mark->w, x, y);
             int max = p[0] > p[1] ? p[0] : p[1];
 
             if (p[2] > max) {
@@ -281,9 +281,9 @@ static unsigned int ground_for(
     if (!n) {
         return 0x141a1e;
     }
-    return ((unsigned int)(sum[0] / n * GROUND_LEVEL) << 16)
-           | ((unsigned int)(sum[1] / n * GROUND_LEVEL) << 8)
-           | (unsigned int)(sum[2] / n * GROUND_LEVEL);
+    return ((unsigned int)(sum[0] / (double)n * GROUND_LEVEL) << 16)
+           | ((unsigned int)(sum[1] / (double)n * GROUND_LEVEL) << 8)
+           | (unsigned int)(sum[2] / (double)n * GROUND_LEVEL);
 }
 
 /* Two grounds differ when their channels are far enough apart. */

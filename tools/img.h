@@ -22,6 +22,21 @@ struct image
     unsigned char* px; /* w * h * 4 bytes */
 };
 
+/*
+ * The byte offset of pixel (x, y) in an image `w` pixels wide. Each
+ * caller holds x and y inside the image, so the conversion is exact.
+ * Writing it once keeps the arithmetic out of the expression that
+ * indexes the pixel.
+ */
+static inline size_t img_offset(
+    int w,
+    int x,
+    int y
+)
+{
+    return ((size_t)y * (size_t)w + (size_t)x) * 4;
+}
+
 struct image* img_new(
     int w,
     int h

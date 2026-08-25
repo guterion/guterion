@@ -269,7 +269,7 @@ static void paint_field(
         double k = 0.12;
 
         for (int x = 0; x < im->w; x++) {
-            unsigned char* d = im->px + ((size_t)y * im->w + x) * 4;
+            unsigned char* d = im->px + img_offset(im->w, x, y);
             double cover = 1.0;
             double dx = 0, dy = 0;
 

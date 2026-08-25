@@ -83,8 +83,8 @@ static struct image* sweep(
 
     for (int y = 0; y < base->h; y++) {
         for (int x = 0; x < base->w; x++) {
-            const unsigned char* s = base->px + ((size_t)y * base->w + x) * 4;
-            unsigned char* d = out->px + ((size_t)y * out->w + x) * 4;
+            const unsigned char* s = base->px + img_offset(base->w, x, y);
+            unsigned char* d = out->px + img_offset(out->w, x, y);
             double k = weights[x];
 
             d[0] = lift(s[0], k);

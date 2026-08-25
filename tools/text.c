@@ -426,7 +426,7 @@ void text_draw(
             if (a > 1.0) {
                 a = 1.0;
             }
-            d = im->px + ((size_t)py * im->w + px) * 4;
+            d = im->px + img_offset(im->w, px, py);
             d[0] = (unsigned char)(d[0] * (1 - a) + r * a + 0.5);
             d[1] = (unsigned char)(d[1] * (1 - a) + g * a + 0.5);
             d[2] = (unsigned char)(d[2] * (1 - a) + b * a + 0.5);
