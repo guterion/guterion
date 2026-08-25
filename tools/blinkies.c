@@ -9,8 +9,8 @@
  *
  * A soft highlight sweeps from one side to the other and wraps, so the
  * loop closes without a seam. Each stamp starts at its own point in the
- * cycle, set by its rank in the sorted list of faces, which stops the
- * wall from pulsing as one block.
+ * cycle, taken from its name, which stops the wall from pulsing as one
+ * block.
  *
  * Browsers give every GIF its own clock — each starts when it finishes
  * decoding — so a sweep that crosses the whole wall in step is not
@@ -106,6 +106,26 @@ static int by_name(
     return strcmp((const char*)a, (const char*)b);
 }
 
+/*
+ * The point in the cycle where one stamp enters, as a fraction. It
+ * comes from the name rather than from the position in the listing, so
+ * a stamp that joins the wall writes its own file and leaves every
+ * other one at the phase it already had. The hash is FNV-1a, which is
+ * short and spreads the names well enough for the eye.
+ */
+static double phase_of(
+    const char* name
+)
+{
+    unsigned int h = 2166136261U;
+
+    for (size_t i = 0; name[i]; i++) {
+        h ^= (unsigned char)name[i];
+        h *= 16777619U;
+    }
+    return (double)(h % 1000U) / 1000.0;
+}
+
 int main(
     void
 )
@@ -145,8 +165,7 @@ int main(
             return 1;
         }
 
-        /* Each stamp enters the cycle at its own point. */
-        offset = fmod(i * 0.37, 1.0);
+        offset = phase_of(names[i]);
         for (int f = 0; f < FRAMES; f++) {
             frames[f] = sweep(base, fmod((double)f / FRAMES + offset, 1.0));
         }
