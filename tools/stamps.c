@@ -158,14 +158,55 @@ static const struct
     {NULL, 0}
 };
 
+/*
+ * The languages the wall speaks, in the order that each caption array
+ * holds them. The tag goes on the file name of a translated stamp, so
+ * `futbol.gif` sits beside `futbol-es.gif`.
+ */
+enum
+{
+    EN,
+    ES,
+    LA,
+    LANGS
+};
+
+static const char* const lang_tag[LANGS] = {"", "-es", "-la"};
+
+/*
+ * A stamp whose caption is a word the reader translates carries one
+ * string for each language. A stamp whose caption is a name carries
+ * one string, and every language reads it: DRAGON BALL stays DRAGON
+ * BALL. A NULL entry falls back to English, which is what most of the
+ * wall does.
+ */
 struct cell
 {
     const char* name;
-    const char* caption;
-    const char* sub; /* NULL when the stamp carries one line */
+    const char* caption[LANGS];
+    const char* sub[LANGS]; /* NULL when the stamp carries one line */
     const char* logo;
     const char* want[2]; /* preferred border colours */
 };
+
+/* The caption of a stamp in one language, or the English it falls back
+   to. */
+static const char* line_for(
+    const char* const text[LANGS],
+    int lang
+)
+{
+    return text[lang] ? text[lang] : text[EN];
+}
+
+/* Whether a stamp reads differently in this language. */
+static int translated(
+    const struct cell* cell,
+    int lang
+)
+{
+    return lang != EN && (cell->caption[lang] || cell->sub[lang]);
+}
 
 #define ROWS 3
 #define COLS 7
@@ -173,40 +214,56 @@ struct cell
 static const struct cell wall[ROWS][COLS] = {
     {
         {"instituto-nacional",
-         "INSTITUTO",
-         "NACIONAL",
+         {"INSTITUTO"},
+         {"NACIONAL"},
          "instituto-nacional.png",
          {"violet", "magenta"}},
-        {"uchile", "UNIVERSIDAD", "DE CHILE", "uchile.png", {"blue", "violet"}},
-        {"fcfm", "FCFM", "UCHILE", "fcfm.png", {"red", "magenta"}},
-        {"dcc", "DCC", "UCHILE", "dcc.png", {"magenta", "red"}},
-        {"gnu-linux", "GNU/LINUX", NULL, "tux.png", {"yellow", "orange"}},
-        {"gentoo", "GENTOO", NULL, "gentoo.png", {"violet", "magenta"}},
-        {"openbsd", "OPENBSD", NULL, "openbsd.png", {"orange", "yellow"}},
+        {"uchile",
+         {"UNIVERSIDAD"},
+         {"DE CHILE"},
+         "uchile.png",
+         {"blue", "violet"}},
+        {"fcfm", {"FCFM"}, {"UCHILE"}, "fcfm.png", {"red", "magenta"}},
+        {"dcc", {"DCC"}, {"UCHILE"}, "dcc.png", {"magenta", "red"}},
+        {"gnu-linux", {"GNU/LINUX"}, {NULL}, "tux.png", {"yellow", "orange"}},
+        {"gentoo", {"GENTOO"}, {NULL}, "gentoo.png", {"violet", "magenta"}},
+        {"openbsd", {"OPENBSD"}, {NULL}, "openbsd.png", {"orange", "yellow"}},
     },
     {
-        {"shell", "SHELL", NULL, "shell.png", {"green", "lime"}},
-        {"clang", "C", NULL, "clang.png", {"blue", "violet"}},
-        {"neovim", "NEOVIM", NULL, "neovim.png", {"lime", "green"}},
-        {"foss", "FREE", "SOFTWARE", "fsf.png", {"magenta", "red"}},
-        {"monero", "MONERO", NULL, "monero.png", {"orange", "yellow"}},
-        {"minecraft", "MINECRAFT", NULL, "minecraft.png", {"lime", "green"}},
+        {"shell", {"SHELL"}, {NULL}, "shell.png", {"green", "lime"}},
+        {"clang", {"C"}, {NULL}, "clang.png", {"blue", "violet"}},
+        {"neovim", {"NEOVIM"}, {NULL}, "neovim.png", {"lime", "green"}},
+        {"foss",
+         {"FREE", "SOFTWARE", "PROGRAMMATA"},
+         {"SOFTWARE", "LIBRE", "LIBERA"},
+         "fsf.png",
+         {"magenta", "red"}},
+        {"monero", {"MONERO"}, {NULL}, "monero.png", {"orange", "yellow"}},
+        {"minecraft",
+         {"MINECRAFT"},
+         {NULL},
+         "minecraft.png",
+         {"lime", "green"}},
         {"dragonball",
-         "DRAGON",
-         "BALL",
+         {"DRAGON"},
+         {"BALL"},
          "dragonball.png",
          {"yellow", "orange"}},
     },
     {
-        {"latine", "LINGVA", "LATINA", "aquila.png", {"violet", "magenta"}},
-        {"santiago", "SANTIAGO", NULL, "santiago.png", {"red", "magenta"}},
-        {"chile", "CHILE", NULL, "gunelve.png", {"blue", "green"}},
-        {"laroja", "LA ROJA", NULL, "laroja.png", {"red", "magenta"}},
-        {"lazio", "SS LAZIO", NULL, "lazio.png", {"blue", "green"}},
-        {"futbol", "FOOTBALL", NULL, "futbol.png", {"green", "yellow"}},
+        {"latine", {"LINGVA"}, {"LATINA"}, "aquila.png", {"violet", "magenta"}},
+        {"santiago", {"SANTIAGO"}, {NULL}, "santiago.png", {"red", "magenta"}},
+        {"chile", {"CHILE"}, {NULL}, "gunelve.png", {"blue", "green"}},
+        {"laroja", {"LA ROJA"}, {NULL}, "laroja.png", {"red", "magenta"}},
+        {"lazio", {"SS LAZIO"}, {NULL}, "lazio.png", {"blue", "green"}},
+        {"futbol",
+         {"FOOTBALL", "FÚTBOL", "PEDILVDIVM"},
+         {NULL},
+         "futbol.png",
+         {"green", "yellow"}},
         {"linkinpark",
-         "LINKIN",
-         "PARK",
+         {"LINKIN"},
+         {"PARK"},
          "linkinpark.png",
          {"magenta", "violet"}},
     }
@@ -633,6 +690,7 @@ static void check(
 
 static void write_stamp(
     const struct cell* cell,
+    int lang,
     unsigned int accent,
     unsigned int ground
 )
@@ -668,15 +726,21 @@ static void write_stamp(
 
     img_fill(im, CANTON, 2, CANTON, H - 3, accent);
 
-    if (cell->sub) {
-        draw_line(im, cell->caption, 15, BONE);
-        draw_line(im, cell->sub, 29, MUTED);
+    if (cell->sub[EN]) {
+        draw_line(im, line_for(cell->caption, lang), 15, BONE);
+        draw_line(im, line_for(cell->sub, lang), 29, MUTED);
     } else {
-        draw_line(im, cell->caption, 22, BONE);
+        draw_line(im, line_for(cell->caption, lang), 22, BONE);
     }
     img_rect(im, 0, 0, W - 1, H - 1, accent);
 
-    snprintf(path, sizeof path, "assets/stamps/%s.png", cell->name);
+    snprintf(
+        path,
+        sizeof path,
+        "assets/stamps/%s%s.png",
+        cell->name,
+        lang_tag[lang]
+    );
     png_write(path, im);
     img_free(im);
 }
@@ -709,17 +773,29 @@ int main(
     separate_grounds();
     check();
 
+    int variants = 0;
+
     for (int r = 0; r < ROWS; r++) {
         for (int c = 0; c < COLS; c++) {
-            write_stamp(
-                &wall[r][c],
-                borders[border_of[r][c]].rgb,
-                ground_of[r][c]
-            );
+            for (int lang = 0; lang < LANGS; lang++) {
+                if (lang == EN || translated(&wall[r][c], lang)) {
+                    write_stamp(
+                        &wall[r][c],
+                        lang,
+                        borders[border_of[r][c]].rgb,
+                        ground_of[r][c]
+                    );
+                    variants += lang != EN;
+                }
+            }
         }
     }
 
-    printf("\n%d wall stamps -> assets/stamps\n\n", ROWS * COLS);
+    printf(
+        "\n%d wall stamps and %d translations -> assets/stamps\n\n",
+        ROWS * COLS,
+        variants
+    );
     for (int r = 0; r < ROWS; r++) {
         printf(" ");
         for (int c = 0; c < COLS; c++) {
