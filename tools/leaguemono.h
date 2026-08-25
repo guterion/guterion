@@ -1,3 +1,4 @@
+/* clang-format off */
 /*
  * tools/leaguemono.h
  * @guterion
@@ -976,3 +977,4 @@ static const struct glyph GLYPHS[] = {
 };
 
 #endif
+/* clang-format on */

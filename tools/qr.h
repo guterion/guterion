@@ -10,9 +10,10 @@
 
 /* A finished symbol. `m` holds size*size modules, one byte each: 1 is
    dark. The caller owns it and frees it with qr_free. */
-struct qr {
-	int size;
-	unsigned char *m;
+struct qr
+{
+    int size;
+    unsigned char* m;
 };
 
 /*
@@ -20,7 +21,11 @@ struct qr {
  * error correction. Returns NULL when the text needs more room than
  * version 5 holds, which is 108 bytes.
  */
-struct qr *qr_make(const char *text);
-void qr_free(struct qr *q);
+struct qr* qr_make(
+    const char* text
+);
+void qr_free(
+    struct qr* q
+);
 
 #endif

@@ -1,0 +1,142 @@
+# ---------------------------------------------------------------------------
+# .clang-format
+# @guterion
+# CC-BY-SA-4.0
+# Vertical LLVM for C: 4 spaces, left pointers, K&R braces, one parameter
+# per line. Copy this file to the root of a C project.
+# ---------------------------------------------------------------------------
+
+# The LLVM preset supplies the defaults that this file does not name. Every
+# key below changes a decision that LLVM makes differently.
+BasedOnStyle: LLVM
+Language: C
+Standard: Latest
+
+# --- INDENTATION ---
+# Four spaces, and spaces only. The continuation indent is equal to the block
+# indent, so a broken parameter list aligns with a nested block.
+IndentWidth: 4
+ContinuationIndentWidth: 4
+TabWidth: 4
+UseTab: Never
+IndentCaseLabels: true
+IndentGotoLabels: false
+IndentPPDirectives: AfterHash
+PPIndentWidth: 4
+
+# The line budget is sufficient for a descriptive identifier and its type. It
+# also lets you put two files side by side on one screen.
+ColumnLimit: 80
+
+# --- POINTERS AND QUALIFIERS ---
+# The asterisk attaches to the type, because the reader looks for the type of
+# the object. Derivation from the current file is off. Thus a file with bad
+# format changes to this rule instead of keeping its own.
+PointerAlignment: Left
+DerivePointerAlignment: false
+QualifierAlignment: Left
+
+# --- BRACES ---
+# The Linux preset gives K&R braces. A function, a struct and an enum open on
+# a new line. An if, a for, a while and a switch open on the same line. The
+# function is a large unit and gets the vertical break. A control block is a
+# local unit and stays compact.
+BreakBeforeBraces: Linux
+
+# The braces are always present, also around one statement. A body without
+# braces is where a subsequent change puts a defect that reads as correct.
+InsertBraces: true
+
+# A block does not collapse to one line. The shape of the code on the screen
+# must agree with the shape of the syntax tree.
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# --- PARAMETER LISTS ---
+# A function that declares two or more parameters writes one parameter on each
+# line. The open bracket stays at the end of the first line, and the close
+# bracket goes alone on its own line. If you add a parameter, the difference
+# shows one new line. It does not show the full signature again.
+#
+# clang-format obeys this rule from two parameters and above. A signature of
+# zero or one parameter stays compact here. Uncrustify makes those two cases
+# vertical in the second pass.
+AlignAfterOpenBracket: BlockIndent
+BinPackParameters: AlwaysOnePerLine
+BreakAfterOpenBracketFunction: true
+BreakBeforeCloseBracketFunction: true
+
+# The return type stays on the line of the function name. The penalty is high
+# enough that clang-format breaks the parameter list first. That break is the
+# break that gives information.
+BreakAfterReturnType: Automatic
+PenaltyReturnTypeOnItsOwnLine: 100000
+
+# --- ARGUMENT LISTS ---
+# A call keeps its arguments on one line while they fit. If the line becomes
+# too long, each argument moves to its own line. The arguments do not pack
+# together. A short call that becomes vertical costs lines and gives nothing.
+BinPackArguments: false
+AllowAllArgumentsOnNextLine: false
+
+# A long call breaks its argument list. It does not break after the assignment
+# operator and keep the call on one crowded line. The penalty makes the
+# argument break less expensive than the assignment break.
+PenaltyBreakAssignment: 500
+
+# --- ALIGNMENT ---
+# Sequential assignments and declarations stay unaligned. Column alignment
+# makes one change rewrite each adjacent line. That hides the true change in
+# the difference.
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: Consecutive
+AlignEscapedNewlines: Left
+AlignOperands: Align
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 0
+
+# --- BLANK LINES ---
+# One blank line divides two definitions. No more than one blank line stays
+# anywhere. A block does not start with an empty line.
+SeparateDefinitionBlocks: Always
+MaxEmptyLinesToKeep: 1
+KeepEmptyLines:
+  AtStartOfBlock: false
+  AtStartOfFile: false
+  AtEndOfFile: false
+
+# --- INCLUDES ---
+# The includes sort in each block, and the blocks keep the order of the
+# author. The system headers, the project headers and the local header stay in
+# their own groups.
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+
+# --- SPACING ---
+SpaceAfterCStyleCast: false
+SpaceBeforeParens: ControlStatements
+SpacesInParens: Never
+SpaceBeforeAssignmentOperators: true
+SpacesBeforeTrailingComments: 1
+BitFieldColonSpacing: Both
+
+# --- LINE BREAKS ---
+# A binary operator or a ternary operator moves to the start of the new line.
+# There the reader sees which operation continues the expression.
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeTernaryOperators: true
+AlwaysBreakBeforeMultilineStrings: false
+
+# --- MISCELLANEOUS ---
+# Comment reflow keeps the comments in the column limit. The final newline is
+# necessary, because a file without one breaks diff and concatenation.
+ReflowComments: Always
+InsertNewlineAtEOF: true
+KeepFormFeed: false
+RemoveSemicolon: true

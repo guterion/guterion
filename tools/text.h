@@ -17,10 +17,15 @@
  * places the path with a transform, so it needs this number rather
  * than the em that produced it.
  */
-double text_scale(double size);
+double text_scale(
+    double size
+);
 
 /* The width that a label occupies, in pixels, at the given size. */
-double text_advance(const char *s, double size);
+double text_advance(
+    const char* s,
+    double size
+);
 
 /*
  * Write the label as SVG path data, in font units, with the pen at the
@@ -29,14 +34,25 @@ double text_advance(const char *s, double size);
  * number of bytes the path needs, which may exceed n; the caller then
  * knows that the buffer was short.
  */
-size_t text_path(char *buf, size_t n, const char *s);
+size_t text_path(
+    char* buf,
+    size_t n,
+    const char* s
+);
 
 /*
  * Draw the label into the image, in the given colour, antialiased.
  * The pen starts at (x, y), where y is the baseline.
  */
-void text_draw(struct image *im, const char *s, double x, double y,
-	       double size, unsigned char r, unsigned char g,
-	       unsigned char b);
+void text_draw(
+    struct image* im,
+    const char* s,
+    double x,
+    double y,
+    double size,
+    unsigned char r,
+    unsigned char g,
+    unsigned char b
+);
 
 #endif
