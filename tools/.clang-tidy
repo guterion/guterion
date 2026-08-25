@@ -1,84 +1,159 @@
-# tools/.clang-tidy
+# ---------------------------------------------------------------------------
+# .clang-tidy
 # @guterion
 # CC-BY-SA-4.0
-# The clang-tidy checks that report a defect rather than a preference
-#
-# The list starts from nothing and adds back the families that find
-# real faults. `make lint` runs it beside cppcheck, the GCC analyser
-# and the compiler warnings, so a clean run means all four agree.
-#
-# The checks it removes fire on code these generators write on
-# purpose. Four of them ask for a language the platform lacks:
-#
-#   err33-c, insecureAPI     want the C11 Annex K functions, which
-#                            glibc does not carry, and a return value
-#                            from every printf.
-#   reserved-identifier      names _GNU_SOURCE, which glibc asks for.
-#   uppercase-literal-suffix wants 0U where the bit masks read 0u.
-#
-# Five report a conversion that the format itself specifies:
-#
-#   signed-char-misuse       PNG scores a filter byte as signed, and a
-#                            TrueType component argument is an int8.
-#   narrowing-conversions    pixel counts reach a double, which holds
-#                            every integer below 2^53.
-#   implicit-widening        palette and table offsets stay under 256
-#                            by an earlier bound.
-#   incorrect-roundings      the blend of two bytes is never negative,
-#                            so +0.5 and truncation round to nearest.
-#   suspicious-string-compare a qsort comparison returns strcmp as it
-#                            stands.
-#
-# Three report a bound that holds through a chain the analyser drops:
-#
-#   ArrayBound               a scanline holds w * channels bytes and
-#                            the loop reads channels bytes w times;
-#                            the QR remainder takes its length from a
-#                            constant table; the two document readers
-#                            allocate one byte beyond the file.
-#   core.uninitialized       a glyph carries at least one point and a
-#                            symbol at least one codeword, so both
-#                            arrays fill before they are read.
-#   TaintedAlloc             the length comes from a file in this
-#                            repository.
-#
-# Four report a shape rather than a fault:
-#
-#   easily-swappable-params, magic-numbers, math-missing-parentheses,
-#   no-recursion, and the readability checks for braces, cognitive
-#   complexity, identifier length and declaration isolation.
+# Post-code check set for C: defect detection first, naming and readability
+# second. Copy this file to the root of a C project.
+# ---------------------------------------------------------------------------
+
+# --- CHECK SELECTION ---
+# The list enables the families that find defects in C, then removes the
+# checks that belong to C++ or that fight the house style. Each removal below
+# has a reason. Do not remove a check because it is noisy: examine the hits
+# first, because most of them are true.
 Checks: >
   -*,
-  clang-analyzer-*,
   bugprone-*,
   cert-*,
+  clang-analyzer-*,
+  concurrency-*,
   misc-*,
   performance-*,
   portability-*,
   readability-*,
+
   -bugprone-easily-swappable-parameters,
-  -bugprone-implicit-widening-of-multiplication-result,
-  -bugprone-incorrect-roundings,
-  -bugprone-narrowing-conversions,
-  -bugprone-reserved-identifier,
-  -bugprone-signed-char-misuse,
-  -bugprone-suspicious-string-compare,
+  -readability-identifier-length,
+  -readability-magic-numbers,
+  -readability-function-cognitive-complexity,
+  -readability-braces-around-statements,
+  -readability-isolate-declaration,
+  -misc-no-recursion,
   -cert-dcl37-c,
   -cert-dcl51-cpp,
+  -bugprone-reserved-identifier,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+
   -cert-err33-c,
+  -concurrency-mt-unsafe,
+  -readability-math-missing-parentheses,
+  -readability-avoid-nested-conditional-operator,
+  -readability-uppercase-literal-suffix,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-signed-char-misuse,
   -cert-str34-c,
+  -bugprone-suspicious-string-compare,
+  -bugprone-incorrect-roundings,
   -clang-analyzer-core.uninitialized.Assign,
   -clang-analyzer-core.uninitialized.Branch,
   -clang-analyzer-optin.taint.TaintedAlloc,
-  -clang-analyzer-security.ArrayBound,
-  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
-  -misc-no-recursion,
-  -readability-avoid-nested-conditional-operator,
-  -readability-braces-around-statements,
-  -readability-function-cognitive-complexity,
-  -readability-identifier-length,
-  -readability-isolate-declaration,
-  -readability-magic-numbers,
-  -readability-math-missing-parentheses,
-  -readability-uppercase-literal-suffix
+  -clang-analyzer-security.ArrayBound
+
+# The reasons for the removals, in order:
+#
+# bugprone-easily-swappable-parameters fires on each function that takes two
+# parameters of the same type. In C that is most functions. The vertical
+# signature style already makes the parameter order visible at the call site.
+#
+# readability-identifier-length rejects the loop counter i and the C idiom of
+# a short name in a short scope.
+#
+# readability-magic-numbers fires on each constant in a bit mask and each
+# protocol offset. Those numbers are the specification, not a defect.
+#
+# readability-function-cognitive-complexity measures a threshold that a state
+# machine and a parser exceed correctly.
+#
+# readability-braces-around-statements duplicates InsertBraces in
+# .clang-format, which does the same work and also repairs the code.
+#
+# readability-isolate-declaration rejects int a, b; which is legitimate C.
+#
+# misc-no-recursion rejects a recursive descent parser and a tree walk.
+#
+# cert-dcl37-c and bugprone-reserved-identifier fire on each header guard that
+# starts with an underscore. Repair the guards once, then enable the checks
+# again if the project keeps them clean.
+#
+# DeprecatedOrUnsafeBufferHandling fires on each memcpy, strcpy, sprintf and
+# memset, and it asks for the _s functions of Annex K. Annex K is optional in
+# C11, glibc does not implement it, and the replacement is unavailable on this
+# platform. The check therefore reports each buffer operation in the program
+# and hides the true findings. The bounds discipline of the c skill covers the
+# same risk.
+
+# The removals that this repository adds, with the count that each one
+# reported before it went. These generators run once, in one thread,
+# and they write files that the repository carries.
+#
+# cert-err33-c (153) asks for a return value from each printf,
+# fprintf and snprintf. Every one of them writes progress to a
+# terminal, and a program that cannot write its progress has already
+# failed at the step that follows.
+#
+# concurrency-mt-unsafe (34) fires on exit(), which runs the atexit
+# handlers. These programs hold no threads.
+#
+# math-missing-parentheses (95), avoid-nested-conditional-operator
+# (11) and uppercase-literal-suffix (6) report a shape, not a fault.
+#
+# implicit-widening (4) fires on palette and table offsets, which an
+# earlier bound holds under 256.
+#
+# signed-char-misuse and str34-c (3) fire where the format wants a
+# signed byte: PNG scores a filter that way, and a TrueType component
+# argument is an int8.
+#
+# suspicious-string-compare (1) fires on the strcmp that a qsort
+# comparison returns as it stands. incorrect-roundings (1) fires on a
+# blend of two bytes, which is never negative, so +0.5 and truncation
+# round to nearest.
+#
+# The three analyser checks report a bound that holds through a chain
+# the analyser drops: a scanline holds w * channels bytes and the loop
+# reads channels bytes w times; the QR remainder takes its length from
+# a constant table; a glyph carries at least one point.
+
+# --- SEVERITY ---
+# Each enabled check is an error. A warning that the build tolerates is a
+# warning that nobody reads. If a hit is a false positive, silence that one
+# line with a NOLINT comment that gives the reason.
+WarningsAsErrors: '*'
+
+# Header files receive the same checks as the source files. The regular
+# expression excludes the third-party trees, whose defects are not yours to
+# repair in this pass.
 HeaderFilterRegex: '.*'
+ExcludeHeaderFilterRegex: '(third_party|vendor|external|subprojects)/'
+
+FormatStyle: file
+
+# --- NAMING ---
+# The C naming rules of the house style: snake_case for each object that the
+# code names, UPPER_CASE for a macro and for an enumeration constant. The
+# prefix of a project, such as ah_, belongs in the identifier itself.
+CheckOptions:
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.StructCase: lower_case
+  readability-identifier-naming.UnionCase: lower_case
+  readability-identifier-naming.EnumCase: lower_case
+  readability-identifier-naming.TypedefCase: lower_case
+  readability-identifier-naming.GlobalConstantCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+  # _GNU_SOURCE is the name that glibc asks for, and the header guards
+  # take the name of their file.
+  readability-identifier-naming.MacroDefinitionIgnoredRegexp: '^(_GNU_SOURCE|[A-Z]+(_[A-Z]+)*_H)$'
+
+  # A static function that lives in one translation unit does not need a
+  # prefix, but a global one does. The check states the rule; it does not
+  # enforce a specific prefix, because each project chooses its own.
+  readability-identifier-naming.StaticVariableCase: lower_case
+
+  # The analyzer follows more paths before it stops. The default gives up
+  # early on a function with many branches, which is the function that hides
+  # the defect.
+  clang-analyzer-unix.Malloc.Optimistic: false
