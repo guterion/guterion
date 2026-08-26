@@ -128,10 +128,14 @@ sanitize:
 # breaks a bracket only when the content overflows the column limit.
 #
 # The pipeline runs twice. From a foreign style it needs two passes to
-# reach its fixed point. uncrustify opens the brace of an array
-# initialiser as though it were a function, and clang-format closes it
-# again on the following pass. From the fixed point the second run
-# changes nothing.
+# reach its fixed point, and the reason sits inside clang-format rather
+# than in the interaction of the two tools. Given a table whose brace
+# opened on its own line, clang-format produces `= \n    {` on the first
+# run and collapses that to `= {` on the second, which then lets the
+# elements rejoin their lines. clang-format run alone, with uncrustify
+# nowhere in the pipeline, shows the same two-step behaviour.
+#
+# From the fixed point the second run changes nothing.
 SOURCES = badges.c blinkies.c check.c codes.c img.c localise.c \
 	  outline.c qr.c stamps.c text.c
 HEADERS = img.h qr.h text.h leaguemono.h

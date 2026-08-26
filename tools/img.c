@@ -1052,8 +1052,7 @@ static int choose_filter(
                         int pa = p > a ? p - a : a - p;
                         int pb = p > b ? p - b : b - p;
                         int pc = p > c ? p - c : c - p;
-                        int pred = (pa <= pb &&
-                            pa <= pc) ? a : (pb <= pc ? b : c);
+                        int pred = (pa <= pb && pa <= pc) ? a : (pb <= pc ? b : c);
 
                         v = row[i] - pred;
                         break;
