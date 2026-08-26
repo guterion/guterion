@@ -1,6 +1,6 @@
 # tools/Makefile
 # @guterion
-# CC-BY-SA-4.0
+# AGPL-3.0-or-later
 # Build the generators, then rebuild the assets and the pages.
 
 # --- TOOLCHAIN --------------------------------------------------------

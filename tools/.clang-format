@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # .clang-format
 # @guterion
-# CC-BY-SA-4.0
+# AGPL-3.0-or-later
 # Vertical LLVM for C: 4 spaces, left pointers, K&R braces, one parameter
 # per line. Copy this file to the root of a C project.
 # ---------------------------------------------------------------------------

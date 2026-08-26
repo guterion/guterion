@@ -1,7 +1,7 @@
 /*
  * tools/codes.c
  * @guterion
- * CC-BY-SA-4.0
+ * AGPL-3.0-or-later
  * Draw the QR code that carries each payment address.
  */
 

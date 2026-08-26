@@ -40,9 +40,26 @@ licence above:
 | `assets/stamps/*.gif`              | The stamp set                      |
 | `assets/badges/*.svg`              | The social badges                  |
 | `assets/qr/*.png`                  | The payment addresses, as QR       |
-| `tools/*`                          | The generators                     |
 | `assets/logos/shell.png`           | The chevron prompt mark            |
 | `assets/logos/phosphorus.svg`      | The alchemical sign of phosphorus  |
+
+## The generators
+
+`tools/` holds the programs that write the assets and the pages. They are
+software, and they carry a software licence:
+
+    SPDX-License-Identifier: AGPL-3.0-or-later
+
+The GNU Affero General Public Licence, version 3 or, at your option, any
+later version published by the Free Software Foundation. The legal text is
+available at:
+
+<https://www.gnu.org/licenses/agpl-3.0.html>
+
+The split is deliberate. A copyleft licence written for source code states
+what "the corresponding source" is, and that phrase carries no clear meaning
+for a GIF or for a paragraph of prose. The images that these programs write
+stay under the content licence above, beside the rest of the assets.
 
 ## Third-party material
 

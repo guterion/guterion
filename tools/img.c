@@ -1,7 +1,7 @@
 /*
  * tools/img.c
  * @guterion
- * CC-BY-SA-4.0
+ * AGPL-3.0-or-later
  * Read and write PNG and GIF, scale images, and inflate zlib streams.
  */
 

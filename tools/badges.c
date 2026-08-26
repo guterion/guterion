@@ -1,7 +1,7 @@
 /*
  * tools/badges.c
  * @guterion
- * CC-BY-SA-4.0
+ * AGPL-3.0-or-later
  * Generate the social badges, each carrying its own logotype.
  */
 

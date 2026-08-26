@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # .clang-tidy
 # @guterion
-# CC-BY-SA-4.0
+# AGPL-3.0-or-later
 # Post-code check set for C: defect detection first, naming and readability
 # second. Copy this file to the root of a C project.
 # ---------------------------------------------------------------------------

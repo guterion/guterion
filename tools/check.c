@@ -1,7 +1,7 @@
 /*
  * tools/check.c
  * @guterion
- * CC-BY-SA-4.0
+ * AGPL-3.0-or-later
  * Check the profile pages for box widths, links and alt text.
  */
 

@@ -1,7 +1,7 @@
 /*
  * tools/stamps.c
  * @guterion
- * CC-BY-SA-4.0
+ * AGPL-3.0-or-later
  * Generate the 99x56 stamps and colour the wall like a graph.
  */
 

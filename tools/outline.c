@@ -1,7 +1,7 @@
 /*
  * tools/outline.c
  * @guterion
- * CC-BY-SA-4.0
+ * AGPL-3.0-or-later
  * Read a TrueType face and write the glyph table that the badges set.
  */
 
@@ -178,7 +178,7 @@ static const char* const prologue =
     "/*\n"
     " * tools/leaguemono.h\n"
     " * @guterion\n"
-    " * CC-BY-SA-4.0\n"
+    " * AGPL-3.0-or-later\n"
     " * The League Mono Narrow Bold outlines that the badges set their labels "
     "in\n"
     " *\n"

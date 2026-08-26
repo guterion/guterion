@@ -1,7 +1,7 @@
 /*
  * tools/qr.h
  * @guterion
- * CC-BY-SA-4.0
+ * AGPL-3.0-or-later
  * Build the QR matrix that carries a payment address.
  */
 

@@ -1,7 +1,7 @@
 /*
  * tools/localise.c
  * @guterion
- * CC-BY-SA-4.0
+ * AGPL-3.0-or-later
  * Build the three localised pages from README.md.
  */
 

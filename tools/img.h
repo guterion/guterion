@@ -1,7 +1,7 @@
 /*
  * tools/img.h
  * @guterion
- * CC-BY-SA-4.0
+ * AGPL-3.0-or-later
  * Image primitives for the stamp generators.
  */
 
