@@ -2,11 +2,13 @@
  * tools/img.c
  * @guterion
  * CC-BY-SA-4.0
- * Image primitives: inflate, PNG in and out, Lanczos scaling, GIF out
- *
- * The generators need to read the logotypes, scale them, compose the
- * stamps and write the animation. Fil-C cannot link against libpng or
- * giflib, so each piece is here, in the smallest form that does the job
+ * Read and write PNG and GIF, scale images, and inflate zlib streams.
+ */
+
+/*
+ * The generators read the logotypes, scale them, compose the stamps
+ * and write the animation. Fil-C cannot link against libpng or giflib,
+ * so each piece lives here, in the smallest form that does the job
  * correctly.
  */
 
@@ -268,8 +270,8 @@ static int grow_push(
 }
 
 /*
- * Inflate a zlib stream: two header bytes, then the DEFLATE blocks.
- * Returns a fresh buffer that the caller owns.
+ * Inflate a zlib stream. The stream holds two header bytes and then
+ * the DEFLATE blocks. Returns a fresh buffer that the caller owns.
  */
 static unsigned char* inflate_zlib(
     const unsigned char* src,
@@ -889,7 +891,7 @@ static unsigned char* deflate_fixed(
         head[k] = -1;
     }
 
-    /* zlib header: deflate, 32K window, default level, no dictionary. */
+    /* zlib header, 32K window, default level, no dictionary */
     if (bits_byte(&b, 0x78) || bits_byte(&b, 0x9C)) {
         goto fail;
     }
@@ -1009,7 +1011,7 @@ static unsigned char* deflate_fixed(
 /*
  * Choose a filter for one row. Each of the five is scored by the sum
  * of its bytes read as signed values, which is the heuristic that the
- * PNG specification recommends: the filter that leaves the smallest
+ * PNG specification recommends. The filter that leaves the smallest
  * sum leaves the least for the compressor to carry.
  */
 static int choose_filter(
@@ -1677,7 +1679,7 @@ int gif_write(
     fputc(0, f);
     fwrite(pal, 1, sizeof pal, f);
 
-    /* Netscape block: loop for ever. */
+    /* Netscape block, loop for ever. */
     fputc(0x21, f);
     fputc(0xFF, f);
     fputc(11, f);
@@ -1700,7 +1702,7 @@ int gif_write(
         fputc(0x21, f); /* graphic control extension */
         fputc(0xF9, f);
         fputc(4, f);
-        fputc(0x04, f); /* disposal: leave in place */
+        fputc(0x04, f); /* disposal, leave in place */
         fputc(delay_cs & 0xFF, f);
         fputc((delay_cs >> 8) & 0xFF, f);
         fputc(0, f);

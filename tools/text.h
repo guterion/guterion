@@ -2,7 +2,7 @@
  * tools/text.h
  * @guterion
  * CC-BY-SA-4.0
- * Set a label in League Mono Narrow Bold, as an SVG path or as pixels
+ * Set a label in League Mono Narrow Bold, as an SVG path or as pixels.
  */
 
 #ifndef TEXT_H
@@ -31,7 +31,7 @@ double text_advance(
  * Write the label as SVG path data, in font units, with the pen at the
  * origin and y rising. The caller places and scales it with a
  * transform, which keeps every coordinate a short integer. Returns the
- * number of bytes the path needs, which may exceed n; the caller then
+ * number of bytes the path needs, which may exceed n. The caller then
  * knows that the buffer was short.
  */
 size_t text_path(

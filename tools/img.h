@@ -2,10 +2,12 @@
  * tools/img.h
  * @guterion
  * CC-BY-SA-4.0
- * Image primitives for the stamp generators: PNG in and out, GIF out
- *
+ * Image primitives for the stamp generators.
+ */
+
+/*
  * Fil-C cannot link against ordinary C objects, so libpng, zlib and
- * giflib are unavailable however they are installed. These routines
+ * giflib stay unavailable however they are installed. These routines
  * carry only what the generators need, and they compile as Fil-C.
  */
 

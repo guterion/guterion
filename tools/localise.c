@@ -2,16 +2,18 @@
  * tools/localise.c
  * @guterion
  * CC-BY-SA-4.0
- * Build the three localised pages from README.md
- *
+ * Build the three localised pages from README.md.
+ */
+
+/*
  *     $FILC/build/bin/clang -g -O -o tools/localise tools/localise.c
  *
  * README.md is the source. Each copy adjusts its asset paths and its
- * language selector, then applies its own dictionary, so the four pages
- * never drift apart. Run this after every edit to README.md.
+ * language selector, then applies its own dictionary, so the four
+ * pages never drift apart. Run this after every edit to README.md.
  *
- * A phrase that the dictionary cannot find is reported rather than
- * skipped in silence, which catches a sentence that moved.
+ * The program reports a phrase that the dictionary cannot find. A
+ * silent skip would hide a sentence that moved.
  */
 
 /* strdup comes from the GNU extensions, not from C itself. */
@@ -318,7 +320,7 @@ static char* replace_all(
         const char* at = strstr(p, find);
         size_t chunk = at ? (size_t)(at - p) : strlen(p);
 
-        /* Grow before writing: chunk, then the replacement. */
+        /* Grow before writing, first the chunk and then the replacement. */
         while (len + chunk + repl_len + 1 > cap) {
             char* bigger;
 

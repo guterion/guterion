@@ -2,18 +2,21 @@
  * tools/qr.c
  * @guterion
  * CC-BY-SA-4.0
- * Build the QR matrix that carries a payment address
- *
+ * Build the QR matrix that carries a payment address.
+ */
+
+/*
  * The symbols here hold payment addresses, which run from eighteen to
  * ninety-five bytes. That fits versions 1 to 5 at the L level of error
  * correction, where the codewords form a single block, so this file
  * carries no interleaving. A longer address stops the run rather than
  * silently losing its tail.
  *
- * The steps follow ISO/IEC 18004: encode the text into codewords, add
- * the Reed-Solomon remainder, lay the function patterns, walk the data
- * through the matrix in the zigzag the standard sets, then try the
- * eight masks and keep the one that scores lowest.
+ * The steps follow ISO/IEC 18004. The encoder writes the text into
+ * codewords, adds the Reed-Solomon remainder, lays the function
+ * patterns, walks the data through the matrix in the zigzag the
+ * standard sets, and tries the eight masks. The mask with the lowest
+ * score wins.
  */
 
 #include <stdlib.h>
@@ -24,8 +27,9 @@
 /* --- VERSIONS --------------------------------------------------------- */
 
 /*
- * One row for each version this file writes: the data codewords and the
- * error correction codewords that follow them, at level L.
+ * One row for each version this file writes. It holds the data
+ * codewords and the error correction codewords that follow them, at
+ * level L.
  */
 static const struct
 {
@@ -305,9 +309,9 @@ static void apply_mask(
 }
 
 /*
- * The format bits: the error correction level, the mask, and a BCH
- * remainder, all exclusive-ored with a fixed pattern so the field is
- * never all zero.
+ * The format bits. They carry the error correction level, the mask,
+ * and a BCH remainder, all exclusive-ored with a fixed pattern so the
+ * field is never all zero.
  */
 static void place_format(
     struct grid* g,

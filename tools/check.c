@@ -2,16 +2,17 @@
  * tools/check.c
  * @guterion
  * CC-BY-SA-4.0
- * Check the profile pages: box widths, links and alt text
- *
- * Build with Fil-C, which gives every pointer a capability and turns a
- * memory safety violation into a panic:
- *
+ * Check the profile pages for box widths, links and alt text.
+ */
+
+/*
  *     $FILC/build/bin/clang -g -O -o tools/check tools/check.c
  *
- * The program reads only, so it holds no state that a later run depends
- * on. It reports every problem and exits non-zero, which lets it serve
- * as a pre-commit gate.
+ * Fil-C gives every pointer a capability, so a memory safety violation
+ * becomes a panic instead of a silent corruption. The program reads
+ * only, so it holds no state that a later run depends on. It reports
+ * every problem and exits non-zero, which lets it serve as a
+ * pre-commit gate.
  */
 
 /* memmem comes from the GNU extensions, not from C itself. */
@@ -53,7 +54,7 @@ __attribute__((format(
 
 /*
  * Terminal cell width of one UTF-8 string. The pages hold Latin text,
- * box-drawing characters and the odd emoji; only the emoji ranges take
+ * box-drawing characters and the odd emoji. Only the emoji ranges take
  * two cells, so the table stays this short.
  */
 static int cell_width(
@@ -90,7 +91,7 @@ static int cell_width(
         }
         i += (size_t)bytes;
 
-        /* Wide ranges: CJK, and the emoji blocks the pages use. */
+        /* Wide ranges, CJK and the emoji blocks the pages use. */
         if ((cp >= 0x1100 && cp <= 0x115F) || (cp >= 0x2E80 && cp <= 0xA4CF)
             || (cp >= 0xAC00 && cp <= 0xD7A3) || (cp >= 0xF900 && cp <= 0xFAFF)
             || (cp >= 0x1F300 && cp <= 0x1FAFF)
@@ -321,7 +322,7 @@ static void check_quoted_paths(
     }
 }
 
-/* Every image carries alt text; a decorative one carries an empty one. */
+/* Every image carries alt text. A decorative one carries an empty one. */
 static void check_alt(
     const char* doc,
     const char* text
@@ -383,7 +384,7 @@ static char* slurp(
     return buf;
 }
 
-/* The pages to read: the two at the root, then one per locale. */
+/* The two pages at the root, then one README per locale. */
 static int collect_docs(
     char docs[MAX_DOCS][MAX_PATH]
 )

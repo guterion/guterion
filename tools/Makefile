@@ -1,10 +1,10 @@
 # tools/Makefile
 # @guterion
 # CC-BY-SA-4.0
-# Build the generators, then rebuild the assets and the pages
+# Build the generators, then rebuild the assets and the pages.
 
 # --- TOOLCHAIN --------------------------------------------------------
-# Fil-C gives these programs memory safety while they run: every pointer
+# Fil-C gives these programs memory safety while they run. Every pointer
 # carries its bounds, so an overrun traps instead of corrupting the
 # heap. Point FILC at another installation to build against a different
 # version of it.
@@ -12,12 +12,12 @@ FILC ?= $(HOME)/.local/opt/filc-0.683-linux-x86_64
 CC = $(FILC)/build/bin/filcc
 
 # --- FLAGS ------------------------------------------------------------
-# The safety envelope comes first; the optimisation fits inside it.
+# The safety envelope comes first, and the optimisation fits inside it.
 # Fil-C already refuses the memory errors that the stack protector and
 # FORTIFY answer, so those two stay only as defence in depth. Two flags
-# still carry their own weight here: the automatic zero initialisation
+# still carry their own weight here. The automatic zero initialisation
 # makes an uninitialised read deterministic, which is a correctness
-# property, and the trapping sanitiser stops signed overflow and bad
+# property. The trapping sanitiser stops signed overflow and bad
 # shifts, which memory safety says nothing about.
 #
 # The undefine comes first because the Gentoo Hardened toolchain on
@@ -38,10 +38,10 @@ HARDEN = -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 \
 #
 # The assets in the repository come from this build. Another compiler
 # at another level writes slightly different bytes, because the fused
-# multiply-add that -ffp-contract=on permits lands in different places:
-# the sanitiser build below moves a stamp by a byte or two of its
+# multiply-add that -ffp-contract=on permits lands in different places.
+# The sanitiser build below moves a stamp by a byte or two of its
 # compression. The images look the same and their pixels round the
-# same; only the exact file differs. Regenerate with this profile
+# same, and only the exact file differs. Regenerate with this profile
 # whenever an asset is to be committed.
 #
 # This Fil-C distribution ships no gold plugin, so link-time
@@ -78,8 +78,8 @@ outline: outline.c
 
 # --- GENERATION -------------------------------------------------------
 # Each program resolves its paths from the repository root, so every
-# recipe below runs there. The stamps come first: the animation reads
-# the faces that the stamp program writes.
+# recipe below runs there. The stamps come first, because the
+# animation reads the faces that the stamp program writes.
 assets: stamps blinkies badges codes
 	cd .. && tools/stamps && tools/blinkies && tools/badges && tools/codes
 
@@ -99,7 +99,7 @@ font: outline
 # --- SANITIZER --------------------------------------------------------
 # Fil-C answers memory safety, and it says nothing about signed
 # overflow, a bad shift or a data race. The trapping sanitiser closes
-# the first two: it aborts at the point of the fault rather than
+# the first two. It aborts at the point of the fault rather than
 # carrying a wrong number forward. The run below is the whole
 # generation, which is the only workload these programs have.
 #
@@ -123,12 +123,12 @@ sanitize:
 
 # --- FORMAT -----------------------------------------------------------
 # Two tools produce the house style, and the order is fixed.
-# clang-format does the primary work; uncrustify then opens the short
+# clang-format does the primary work. uncrustify then opens the short
 # signature that clang-format leaves on one line, because clang-format
 # breaks a bracket only when the content overflows the column limit.
 #
 # The pipeline runs twice. From a foreign style it needs two passes to
-# reach its fixed point: uncrustify opens the brace of an array
+# reach its fixed point. uncrustify opens the brace of an array
 # initialiser as though it were a function, and clang-format closes it
 # again on the following pass. From the fixed point the second run
 # changes nothing.
@@ -164,15 +164,15 @@ format-check:
 # include-what-you-use asks why each #include is there.
 #
 # These use the system toolchain rather than Fil-C, because they read
-# the sources and build nothing. Fil-C answers a different question:
-# it watches the programs while they run.
+# the sources and build nothing. Fil-C answers a different question.
+# It watches the programs while they run.
 #
 # The cppcheck suppressions below name reports that a bound elsewhere
 # already holds. A glyph carries at least one point, a symbol at least
 # one codeword, and the QR mask loop always takes its first grid, so
 # the arrays those three reports name fill before anything reads them.
-# The remaining two are shapes: an accumulator that starts at zero,
-# and two locals that could sit one block deeper.
+# The remaining two name shapes rather than faults, an accumulator that
+# starts at zero and two locals that could sit one block deeper.
 # constParameterPointer asks for const on the four functions that paint
 # into an image. They modify no field of the structure, only the buffer
 # that px points at, so the request is correct by the letter. The const
@@ -193,7 +193,7 @@ CPPCHECK_SUPPRESS = --suppress=constParameterPointer \
 ANALYSER ?=
 
 # The warning set of the c-style skill. -Wconversion and
-# -Wsign-conversion carry their weight: the tree answered 41 of them,
+# -Wsign-conversion carry their weight. The tree answered 41 of them,
 # each one by repairing a type rather than by adding a cast.
 LINT_WARN = -std=c17 -Wall -Wextra -Wpedantic \
 	    -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations \

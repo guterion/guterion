@@ -2,22 +2,23 @@
  * tools/codes.c
  * @guterion
  * CC-BY-SA-4.0
- * Draw the QR code that carries each payment address
- *
+ * Draw the QR code that carries each payment address.
+ */
+
+/*
  * The addresses live here rather than in the page, so the code and the
- * text below it come from one source and cannot drift apart.
- *
- * Each symbol takes a different version, because the addresses differ
- * in length. Two things have to hold at once: the canvas must be one
+ * text below it come from one source and cannot drift apart. Each
+ * symbol takes a different version, because the addresses differ in
+ * length. Two things have to hold at once. The canvas stays at one
  * size, or the page scales each image by a different factor and the
- * symbols come out uneven again, and the symbols themselves must be
- * near enough in size that the row reads level.
+ * symbols come out uneven again. The symbols also sit near enough in
+ * size that the row reads level.
  *
- * So each symbol takes the scale that brings it closest to the target
- * width, and the margin takes whatever is left over. The margin is
- * measured in pixels rather than in modules, which lets the canvas
- * stay fixed; the check below keeps it at the four modules that the
- * standard asks for.
+ * Each symbol takes the scale that brings it closest to the target
+ * width, and the margin takes what is left over. The margin is
+ * measured in pixels rather than in modules, which keeps the canvas
+ * fixed. The check in main holds the margin at the four modules that
+ * the standard asks for.
  */
 
 #include <stdio.h>

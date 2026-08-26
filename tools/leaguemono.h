@@ -13,7 +13,7 @@
  * baseline sits at zero, with y rising. Every glyph advances 1140
  * units, because the face is monospaced.
  *
- * A stroke holds one segment of one contour:
+ * A stroke holds one segment of one contour.
  *
  *     'M'   start a contour at (a, b)
  *     'L'   draw a line to (a, b)

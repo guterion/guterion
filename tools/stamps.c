@@ -2,26 +2,26 @@
  * tools/stamps.c
  * @guterion
  * CC-BY-SA-4.0
- * Generate the 99x56 stamps and colour the wall like a graph
- *
+ * Generate the 99x56 stamps and colour the wall like a graph.
+ */
+
+/*
  *     $FILC/build/bin/clang -g -O -o tools/stamps \
  *         tools/stamps.c tools/img.c -I tools -lm
  *
  * Each stamp carries a canton on the left holding the original
- * logotype, a rule, and the caption on the right.
+ * logotype, a rule, and the caption on the right. The canton ground
+ * comes from the logotype itself. The program averages the colour of
+ * the mark and darkens it to a ground, so a stamp is recognisable
+ * from across the page. A pale or monochrome mark averages to grey,
+ * so those stamps name their ground by hand in fixed.
  *
- * The canton ground comes from the logotype itself: theprogram averages the
- * mark's own colour and darkens it to a ground, so a stamp is
- * recognisable from across the page. A mark that is pale or monochrome
- * averages to grey, so those stamps name their ground by hand in fixed.
- *
- * The wall is a three by seven grid, and two stamps that touch —
- * including on the diagonal — take different border colours and
- * different canton grounds. That is the eight-neighbour colouring of a
- * king graph. The program verifies the result and stops rather than
- * writing a clash.
- *
- * Colours come from Phosphor Base24 (github.com/guterion/phosphor).
+ * The wall is a three by seven grid, and two stamps that touch,
+ * including on the diagonal, take different border colours and
+ * different canton grounds. That is the eight-neighbour colouring of
+ * a king graph. The program checks the result and stops rather than
+ * writing a clash. Colours come from Phosphor Base24
+ * (github.com/guterion/phosphor).
  */
 
 #include <math.h>
@@ -34,7 +34,7 @@
 
 #define W            99
 #define H            56
-#define CANTON       28   /* One width for every stamp. */
+#define CANTON       28   /* The left band that holds the logotype. */
 #define CELL         6    /* Terminus 12 advances six pixels. */
 #define BOX          20   /* The mark never reaches the border. */
 #define GROUND_LEVEL 0.30 /* How far the logotype colour drops. */
@@ -111,7 +111,7 @@ glyphs12[] = {
 
 /* --- PHOSPHOR BASE24 --- */
 #define BONE  0xFFFAEB /* base07 */
-#define MUTED 0x96948B /* base05; never repeats a border colour */
+#define MUTED 0x96948B /* base05 */
 
 /* The bright chromatic slots, which carry the borders. */
 static const struct
@@ -143,7 +143,7 @@ static const struct
     const char* stamp;
     unsigned int rgb;
 } fixed[] = {
-    {"chile", 0x4a0a12},    /* The star is white; take the flag's red. */
+    {"chile", 0x4a0a12},    /* The star is white, so take the flag's red. */
     {"laroja", 0x6b0f18},   /* The team is called the red one. */
     {"latine", 0x3b1030},   /* Tyrian purple, for the eagle. */
     {"santiago", 0x2e2a26}, /* The cross is red on white. */
@@ -176,7 +176,7 @@ static const char* const lang_tag[LANGS] = {"", "-es", "-la"};
 /*
  * A stamp whose caption is a word the reader translates carries one
  * string for each language. A stamp whose caption is a name carries
- * one string, and every language reads it: DRAGON BALL stays DRAGON
+ * one string, and every language reads it, so DRAGON BALL stays DRAGON
  * BALL. A NULL entry falls back to English, which is what most of the
  * wall does.
  */
@@ -324,7 +324,7 @@ static void draw_line(
     size_t len = letters(text);
     size_t i = 0;
 
-    /* Terminus leaves a pixel of air beside each glyph; dropping it
+    /* Terminus leaves a pixel of air beside each glyph. Dropping it
        lets a long caption keep clear of the border. */
     int cell = len > 9 ? 5 : CELL;
     int x = CANTON + (W - CANTON - (int)len * cell) / 2;
@@ -352,7 +352,7 @@ static void draw_line(
     }
 }
 
-/* The canton ground: the logotype's own colour, dropped to a field. */
+/* The logotype's own colour, dropped to a field. */
 static unsigned int ground_for(
     const char* name,
     const struct image* mark
@@ -407,8 +407,8 @@ static int far_enough(
 
 /*
  * Lift or deepen a ground, holding the hue the logotype gave it.
- * Separating by weight rather than by hue is what keeps Monero orange:
- * a neighbour moves in lightness, not in colour.
+ * Separating by weight rather than by hue keeps Monero orange,
+ * because a neighbour moves in lightness and not in colour.
  */
 static unsigned int shade(
     unsigned int rgb,

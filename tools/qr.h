@@ -2,14 +2,14 @@
  * tools/qr.h
  * @guterion
  * CC-BY-SA-4.0
- * Build the QR matrix that carries a payment address
+ * Build the QR matrix that carries a payment address.
  */
 
 #ifndef QR_H
 #define QR_H
 
-/* A finished symbol. `m` holds size*size modules, one byte each: 1 is
-   dark. The caller owns it and frees it with qr_free. */
+/* A finished symbol. `m` holds size*size modules, one byte each, where
+   1 is dark. The caller owns it and frees it with qr_free. */
 struct qr
 {
     int size;

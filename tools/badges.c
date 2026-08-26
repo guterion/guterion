@@ -2,17 +2,15 @@
  * tools/badges.c
  * @guterion
  * CC-BY-SA-4.0
- * Generate the social badges, each carrying its own logotype
- *
- * A badge is twenty pixels tall, the height at which a Markdown list
- * bullet sits level with it. The mark travels inside the SVG as a
- * base64 data URI, so a badge needs no other host.
- *
- * Every badge takes the width of the widest one, which lines the
- * column up. The label is set in League Mono Narrow Bold, whose
- * outlines `text.c` carries: the SVG receives them as a path, so the
- * badge looks the same to a reader who holds no such font, and the
- * PNG receives them as coverage that the same file rasterises.
+ * Generate the social badges, each carrying its own logotype.
+ */
+
+/*
+ * A badge stands twenty pixels tall, beside the bullet of a Markdown
+ * list. Every badge takes the width of the widest one, which lines the
+ * column up. The mark travels inside the SVG as base64 data, and the
+ * label comes from the outlines that text.c carries, so a badge needs
+ * no other host and no font that the reader holds.
  *
  * Each badge is written twice. The SVG is what the pages carry. The
  * PNG at twice the size goes to a mail signature, and anywhere else
@@ -37,7 +35,7 @@
 #define RADIUS      2  /* The corner the field turns. */
 #define PNG_SCALE   2  /* The PNG carries twice the pixels of the SVG. */
 
-/* One badge: the file it writes, its label, field colour, mark and ink. */
+/* One badge, its file, its label, field colour, mark and ink. */
 struct badge
 {
     const char* name;
@@ -56,7 +54,7 @@ struct badge
 };
 
 /*
- * The badge names the service; the value sits beside it, in text a
+ * The badge names the service. The value sits beside it, in text a
  * reader can select and copy.
  */
 static const struct badge set[] = {
@@ -244,10 +242,10 @@ static unsigned char* slurp(
 /* --- THE FIELD -------------------------------------------------------- */
 
 /*
- * Paint the field: the colour, the rounded corner, and the sheen that
- * the SVG draws with a gradient. The gradient runs from white at
- * twelve per cent down to black at the same, so the top lifts and the
- * bottom settles.
+ * Paint the field. The field holds the colour, the rounded corners
+ * and the sheen. The SVG draws the sheen with a gradient from white
+ * at twelve per cent down to black at the same, so the top lifts and
+ * the bottom settles.
  */
 static void paint_field(
     struct image* im,
@@ -505,7 +503,7 @@ int main(
     mkdir("assets", 0755);
     mkdir("assets/badges", 0755);
 
-    /* One width for the whole set: the widest badge sets them all. */
+    /* One width covers the whole set. The widest badge sets it. */
     for (int i = 0; set[i].name; i++) {
         int w = badge_width(&set[i]);
 

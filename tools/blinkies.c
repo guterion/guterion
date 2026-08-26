@@ -2,20 +2,22 @@
  * tools/blinkies.c
  * @guterion
  * CC-BY-SA-4.0
- * Animate the wall stamps with a band of light crossing each face
- *
+ * Animate the wall stamps with a band of light crossing each face.
+ */
+
+/*
  *     $FILC/build/bin/clang -g -O -o tools/blinkies \
  *         tools/blinkies.c tools/img.c -I tools -lm
  *
  * A soft highlight sweeps from one side to the other and wraps, so the
- * loop closes without a seam. Each stamp starts at its own point in the
- * cycle, taken from its name, which stops the wall from pulsing as one
+ * loop closes without a seam. Each stamp enters the cycle at its own
+ * point, taken from its name, which stops the wall from pulsing as one
  * block.
  *
- * Browsers give every GIF its own clock — each starts when it finishes
- * decoding — so a sweep that crosses the whole wall in step is not
- * something this can promise. The phase offset is what keeps the wall
- * from looking synchronised.
+ * Browsers give every GIF its own clock, and each clock starts when
+ * the browser finishes decoding. A sweep that crosses the whole wall
+ * in step is therefore beyond what this file can promise. The phase
+ * offset is what keeps the wall from looking synchronised.
  */
 
 #include <dirent.h>
@@ -46,7 +48,7 @@ static unsigned char lift(
     return out > 255.0 ? 255 : (unsigned char)out;
 }
 
-/* One frame: a band of light centred somewhere along the face. */
+/* One frame, a band of light centred somewhere along the face. */
 static struct image* sweep(
     const struct image* base,
     double phase

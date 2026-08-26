@@ -2,12 +2,14 @@
  * tools/text.c
  * @guterion
  * CC-BY-SA-4.0
- * Set a label in League Mono Narrow Bold, as an SVG path or as pixels
- *
- * The outlines travel in `leaguemono.h`, so the badges depend on no
- * font library and on no font that the reader happens to hold. The
- * same outline feeds both consumers: the SVG receives it as path data,
- * which every browser draws the same way, and the PNG receives it as
+ * Set a label in League Mono Narrow Bold, as an SVG path or as pixels.
+ */
+
+/*
+ * The outlines travel in leaguemono.h, so the badges depend on no font
+ * library and on no font that the reader happens to hold. The same
+ * outline feeds both consumers. The SVG receives it as path data,
+ * which every browser draws the same way. The PNG receives it as
  * coverage that this file rasterises.
  */
 
@@ -396,7 +398,7 @@ void text_draw(
             }
             qsort(hits, (size_t)n, sizeof *hits, by_x);
 
-            /* Non-zero winding: the fill lies where the
+            /* Non-zero winding. The fill lies where the
                crossings do not cancel out. */
             for (int i = 0; i < n - 1; i++) {
                 winding += hits[i].dir;

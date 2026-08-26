@@ -2,17 +2,20 @@
  * tools/outline.c
  * @guterion
  * CC-BY-SA-4.0
- * Read a TrueType face and write the glyph table that the badges set
- *
- * The badges need outlines, not a font file: `text.c` draws them into
+ * Read a TrueType face and write the glyph table that the badges set.
+ */
+
+/*
+ * The badges need outlines, not a font file. text.c draws them into
  * SVG path data and rasterises them, so no reader has to hold the
- * face. This program takes the face once and writes `leaguemono.h`.
+ * face. This program takes the face once and writes leaguemono.h.
  *
  * It reads the tables that a simple Latin face needs, and it stops
- * with a message on anything further: a cmap that is not format 4, a
- * component that carries a scale or a rotation, or a character the
- * face does not hold. That is deliberate. A silent fallback would
- * write a glyph that is wrong rather than one that is absent.
+ * with a message on anything further. A cmap that is not format 4, a
+ * component that carries a scale or a rotation, and a character the
+ * face does not hold all stop the run. That is deliberate. A silent
+ * fallback would write a glyph that is wrong rather than one that is
+ * absent.
  */
 
 #include <stdio.h>
@@ -187,7 +190,7 @@ static const char* const prologue =
     " * baseline sits at zero, with y rising. Every glyph advances 1140\n"
     " * units, because the face is monospaced.\n"
     " *\n"
-    " * A stroke holds one segment of one contour:\n"
+    " * A stroke holds one segment of one contour.\n"
     " *\n"
     " *     'M'   start a contour at (a, b)\n"
     " *     'L'   draw a line to (a, b)\n"
@@ -251,7 +254,7 @@ static void walk_contour(
     }
 
     if (start < 0) {
-        /* No on-curve point: the contour starts halfway between
+        /* No on-curve point. The contour starts halfway between
            the last off-curve point and the first. */
         sx = (xs[first] + xs[last]) / 2;
         sy = (ys[first] + ys[last]) / 2;
@@ -272,7 +275,7 @@ static void walk_contour(
             continue;
         }
 
-        /* An off-curve point controls a curve; the point that
+        /* An off-curve point controls a curve. The point that
            ends it is the next on-curve point, or the midpoint
            between this control and the next one. */
         int j = first + (start + k + 1) % n;
