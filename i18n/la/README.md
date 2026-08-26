@@ -2,7 +2,7 @@
 i18n/la/README.md
 @guterion
 CC-BY-SA-4.0
-Profile page in Latin
+Profile page in Latin.
 -->
 
 <div align="center">

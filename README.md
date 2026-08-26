@@ -2,7 +2,7 @@
 README.md
 @guterion
 CC-BY-SA-4.0
-Profile page in English
+Profile page in English.
 -->
 
 <div align="center">

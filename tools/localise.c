@@ -461,13 +461,13 @@ static void build(
     snprintf(
         header_from,
         sizeof header_from,
-        "README.md\n@guterion\nCC-BY-SA-4.0\nProfile page in English"
+        "README.md\n@guterion\nCC-BY-SA-4.0\nProfile page in English."
     );
     snprintf(
         header_to,
         sizeof header_to,
         "i18n/%s/README.md\n@guterion\nCC-BY-SA-4.0\n"
-        "Profile page in %s",
+        "Profile page in %s.",
         lang,
         name
     );

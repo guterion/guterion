@@ -2,7 +2,7 @@
 i18n/es/README.md
 @guterion
 CC-BY-SA-4.0
-Profile page in Spanish
+Profile page in Spanish.
 -->
 
 <div align="center">
