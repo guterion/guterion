@@ -148,12 +148,23 @@ format:
 	@echo "formatted"
 
 # The check runs the same passes to standard output and compares the
-# result against the file on disk. `clang-format --dry-run --Werror`
-# reports every vertical short signature, so it measures the first pass
-# rather than the house style.
+# result against the file on disk. It pipes the pair twice, because the
+# format target runs it twice; a single-pass check reports a clean tree
+# as dirty right after a migration.
+#
+# `clang-format --dry-run --Werror` does not do this job. It reports
+# every vertical short signature, so it measures the first pass rather
+# than the house style.
+#
+# The second clang-format reads standard input, where it has no file
+# name to take the language from and assumes C++. Since .clang-format
+# declares `Language: C`, it then refuses the file. --assume-filename
+# gives it the name back.
 format-check:
 	@for f in $(SOURCES) $(HEADERS); do \
 		clang-format "$$f" | uncrustify -c uncrustify.cfg -q -l C \
+			| clang-format --assume-filename="$$f" \
+			| uncrustify -c uncrustify.cfg -q -l C \
 			| diff -q "$$f" - > /dev/null \
 			|| { echo "unformatted: $$f"; exit 1; }; \
 	done
